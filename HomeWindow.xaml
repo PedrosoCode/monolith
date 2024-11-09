@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:monolith"
         xmlns:ativos="clr-namespace:monolith.ativos"
         Title="Home" Height="600" Width="1000">
-    <DockPanel>
+    <DockPanel LastChildFill="True">
         <!-- Menu superior -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Arquivo">
@@ -13,6 +13,6 @@
         </Menu>
 
         <!-- TabControl principal -->
-        <TabControl Name="MainTabControl" Margin="10"/>
+        <TabControl Name="MainTabControl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </DockPanel>
 </Window>
