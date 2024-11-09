@@ -1,12 +1,62 @@
 ﻿<UserControl x:Class="monolith.ativos.cadAtivos"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:monolith.ativos"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="543.8" d:DesignWidth="1160.4"
+             Background="WhiteSmoke">
+
+    <Grid Margin="0,0,0,29">
+        <!-- Definição de linhas para organizar o layout -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Linha para filtros -->
+            <RowDefinition Height="Auto"/>
+            <!-- Linha para DataGrid -->
+        </Grid.RowDefinitions>
+
+        <!-- Campos de entrada para filtros -->
+        <StackPanel Orientation="Horizontal" Margin="5" Grid.Row="0">
+            <StackPanel>
+                <Label Content="Código"/>
+                <TextBox Name="txtCodigo" Width="100" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Código Cliente"/>
+                <TextBox Name="txtCodigoCliente" Width="150" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Número de Série"/>
+                <TextBox Name="txtNumeroSerie" Width="150" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Código Fabricante"/>
+                <TextBox Name="txtCodigoFabricante" Width="150" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Modelo"/>
+                <TextBox Name="txtModelo" Width="150" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Observação"/>
+                <TextBox Name="txtObservacao" Width="150" Margin="5"/>
+            </StackPanel>
+            <Button Content="Filtrar" Click="BtnFiltrar_Click" Margin="5" VerticalAlignment="Bottom" Width="64"/>
+        </StackPanel>
+
+        <!-- DataGrid para exibição dos dados -->
+        <DataGrid Name="dgAtivos" AutoGenerateColumns="False" Grid.Row="1" Margin="5,5,5,-441">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Código" Binding="{Binding ID}" Width="100"/>
+                <DataGridTextColumn Header="Código Cliente" Binding="{Binding CodigoCliente}" Width="150"/>
+                <DataGridTextColumn Header="Número de Série" Binding="{Binding NumeroSerie}" Width="150"/>
+                <DataGridTextColumn Header="Código Fabricante" Binding="{Binding CodigoFabricante}" Width="150"/>
+                <DataGridTextColumn Header="Modelo" Binding="{Binding Modelo}" Width="150"/>
+                <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="150"/>
+                <DataGridTextColumn Header="Data de Entrada" Binding="{Binding DataInput, StringFormat=\{0:dd/MM/yyyy\}}" Width="150"/>
+                <DataGridTextColumn Header="Código Empresa" Binding="{Binding CodigoEmpresa}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
