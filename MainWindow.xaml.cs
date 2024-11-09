@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -61,11 +62,10 @@ namespace monolith
                 try
                 {
                     conn.Open();
-                    // Chamada para buscar a hash da senha do usuário no banco de dados
                     using (var cmd = new NpgsqlCommand("SELECT senha FROM public.tb_cad_usuario WHERE usuario = @usuario AND codigo_empresa = @codigo_empresa", conn))
                     {
-                        cmd.Parameters.Add(new NpgsqlParameter("usuario", NpgsqlTypes.NpgsqlDbType.Varchar) { Value = usuario });
-                        cmd.Parameters.Add(new NpgsqlParameter("codigo_empresa", NpgsqlTypes.NpgsqlDbType.Bigint) { Value = (long)empresaSelecionada });
+                        cmd.Parameters.AddWithValue("usuario", NpgsqlTypes.NpgsqlDbType.Varchar, usuario);
+                        cmd.Parameters.AddWithValue("codigo_empresa", NpgsqlTypes.NpgsqlDbType.Bigint, (long)empresaSelecionada);
 
                         var resultado = cmd.ExecuteScalar();
 
@@ -73,11 +73,12 @@ namespace monolith
                         {
                             string hashArmazenada = resultado.ToString();
 
-                            // Verifique a senha usando BCrypt
                             if (BCrypt.Net.BCrypt.Verify(senha, hashArmazenada))
                             {
                                 MessageBox.Show("Login realizado com sucesso!");
-                                // Redirecionamento ou outra lógica pode ser inserida aqui
+                                HomeWindow homeWindow = new HomeWindow();
+                                homeWindow.Show();
+                                this.Close(); // Fecha a janela de login
                             }
                             else
                             {

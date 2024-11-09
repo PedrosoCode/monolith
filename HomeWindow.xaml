@@ -1,0 +1,18 @@
+﻿<Window x:Class="monolith.HomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:monolith"
+        xmlns:ativos="clr-namespace:monolith.ativos"
+        Title="Home" Height="600" Width="1000">
+    <DockPanel>
+        <!-- Menu superior -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Arquivo">
+                <MenuItem Header="Abrir cadAtivos" Click="MenuItem_AbrirCadAtivos_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- TabControl principal -->
+        <TabControl Name="MainTabControl" Margin="10"/>
+    </DockPanel>
+</Window>
