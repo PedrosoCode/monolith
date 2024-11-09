@@ -65,7 +65,7 @@ namespace monolith.ativos
 
         private void BtnFiltrar_Click(object sender, RoutedEventArgs e)
         {
-            int codigoEmpresa = 2; //trocar para carregamento dinâmico
+            int codigoEmpresa = Globals.GlobalCodigoEmpresa;
 
             // Converte as entradas de texto para os tipos apropriados
             int? codigo = string.IsNullOrWhiteSpace(txtCodigo.Text) ? (int?)null : int.Parse(txtCodigo.Text.Trim());

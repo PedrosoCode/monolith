@@ -1,10 +1,8 @@
 ﻿using Npgsql;
 using System;
 using System.Configuration;
-using System.Data;
 using System.Windows;
-using Npgsql;
-using BCrypt.Net; 
+using BCrypt.Net;
 
 namespace monolith
 {
@@ -45,8 +43,8 @@ namespace monolith
 
         private void BtnEntrar_Click(object sender, RoutedEventArgs e)
         {
-            string usuario = txtUsuario.Text;
-            string senha = txtSenha.Password;
+            string usuario = txtUsuario.Text.Trim();
+            string senha = txtSenha.Password.Trim();
             var empresaSelecionada = cmbCodigoEmpresa.SelectedValue;
 
             if (empresaSelecionada == null)
@@ -64,8 +62,8 @@ namespace monolith
                     conn.Open();
                     using (var cmd = new NpgsqlCommand("SELECT senha FROM public.tb_cad_usuario WHERE usuario = @usuario AND codigo_empresa = @codigo_empresa", conn))
                     {
-                        cmd.Parameters.AddWithValue("usuario", NpgsqlTypes.NpgsqlDbType.Varchar, usuario);
-                        cmd.Parameters.AddWithValue("codigo_empresa", NpgsqlTypes.NpgsqlDbType.Bigint, (long)empresaSelecionada);
+                        cmd.Parameters.AddWithValue("usuario", usuario);
+                        cmd.Parameters.AddWithValue("codigo_empresa", (long)empresaSelecionada);
 
                         var resultado = cmd.ExecuteScalar();
 
@@ -75,7 +73,12 @@ namespace monolith
 
                             if (BCrypt.Net.BCrypt.Verify(senha, hashArmazenada))
                             {
-                                MessageBox.Show("Login realizado com sucesso!");
+                                // Salva as informações do usuário e da empresa em variáveis globais
+                                Globals.GlobalNomeUsuario = usuario;
+                                Globals.GlobalCodigoEmpresa = (int)(long)empresaSelecionada;
+
+                                MessageBox.Show($"Bem-vindo, {Globals.GlobalNomeUsuario}!");
+
                                 HomeWindow homeWindow = new HomeWindow();
                                 homeWindow.Show();
                                 this.Close(); // Fecha a janela de login
