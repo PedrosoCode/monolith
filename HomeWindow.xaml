@@ -7,8 +7,9 @@
     <DockPanel LastChildFill="True">
         <!-- Menu superior -->
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Arquivo">
-                <MenuItem Header="Abrir cadAtivos" Click="MenuItem_AbrirCadAtivos_Click"/>
+            <MenuItem Header="Cadastros">
+                <MenuItem Header="Abrir Cadastro de Ativos" Name="MenuCadAtivos" Click="MenuItem_AbrirCadAtivos_Click"/>
+                <MenuItem Header="Abrir Cadastro de Parceiros de negócio" Name="MenuCadParceiros" Click="MenuItem_AbrirCadAtivos_Click"/>
             </MenuItem>
         </Menu>
 

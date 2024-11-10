@@ -15,14 +15,13 @@ using System.Windows.Shapes;
 
 namespace monolith.parceiroNegocio
 {
-    /// <summary>
-    /// Interação lógica para UserControl1.xam
-    /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class cadParceiroNegocio : UserControl
     {
-        public UserControl1()
+        public cadParceiroNegocio()
         {
             InitializeComponent();
+            MainTabControl.SelectedItem = TabListagem;
         }
     }
 }
+
