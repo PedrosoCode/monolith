@@ -82,7 +82,8 @@
                                           IsTextSearchEnabled="True"
                                           SelectedValuePath="Codigo"
                                           Width="100"
-                                          Margin="6"/>
+                                          Margin="6"
+                                          SelectionChanged="cboEstado_SelectionChanged"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Cidade" Margin="1"/>

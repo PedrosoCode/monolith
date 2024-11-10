@@ -56,6 +56,56 @@ $$;
 ALTER FUNCTION public.fn_cadastro_listar_tecnico(p_codigo_empresa integer) OWNER TO postgres;
 
 --
+-- Name: fn_gen_filtro_parceiro_negocio(integer, character varying, bigint, bigint, integer, character varying, character varying, character, character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_gen_filtro_parceiro_negocio(p_codigo_empresa integer, p_documento character varying DEFAULT NULL::character varying, p_codigo_pais bigint DEFAULT NULL::bigint, p_codigo_cidade bigint DEFAULT NULL::bigint, p_codigo_estado integer DEFAULT NULL::integer, p_telefone character varying DEFAULT NULL::character varying, p_email character varying DEFAULT NULL::character varying, p_tipo character DEFAULT NULL::bpchar, p_nome_fantasia character varying DEFAULT NULL::character varying, p_razao_social character varying DEFAULT NULL::character varying) RETURNS TABLE(documento_parceiro character varying, codigo_uf_parceiro integer, telefone_parceiro character varying, email_parceiro character varying, data_cadastro_parceiro timestamp without time zone, tipo_parceiro character, codigo_empresa integer, nome_fantasia_parceiro character varying, razao_social_parceiro character varying, municipio_parceiro character varying, pais_parceiro character varying, estado_parceiro character varying, codigo_municipio_parceiro integer, codigo_pais_parceiro integer, codigo_estado_parceiro integer, endereco text)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        tb_cad_parceiro_negocio.documento,
+        tb_cad_parceiro_negocio.codigo_estado,
+        tb_cad_parceiro_negocio.telefone,
+        tb_cad_parceiro_negocio.email,
+        tb_cad_parceiro_negocio.data_cadastro,
+        tb_cad_parceiro_negocio.tipo_parceiro,
+        tb_cad_parceiro_negocio.codigo_empresa,
+        tb_cad_parceiro_negocio.nome_fantasia,
+        tb_cad_parceiro_negocio.razao_social,
+        municipio.nome, 
+        pais.nome_pt, 
+        tb_stc_estados.nome,
+        municipio.id, 
+        pais.id, 
+        tb_stc_estados.id,
+        COALESCE(tb_cad_parceiro_negocio.logradouro, '') || ', ' ||
+        COALESCE(tb_cad_parceiro_negocio.numero, '') || ', ' ||
+        COALESCE(tb_cad_parceiro_negocio.bairro, '') AS endereco
+    FROM tb_cad_parceiro_negocio
+    LEFT JOIN municipio 
+        ON municipio.id = tb_cad_parceiro_negocio.codigo_cidade
+    LEFT JOIN pais
+        ON pais.id = tb_cad_parceiro_negocio.codigo_pais
+    LEFT JOIN tb_stc_estados
+        ON tb_stc_estados.id = tb_cad_parceiro_negocio.codigo_estado
+    WHERE (tb_cad_parceiro_negocio.documento = p_documento OR p_documento IS NULL)
+      AND (tb_cad_parceiro_negocio.telefone = p_telefone OR p_telefone IS NULL)
+      AND (tb_cad_parceiro_negocio.email = p_email OR p_email IS NULL)
+      AND (tb_cad_parceiro_negocio.tipo_parceiro = p_tipo OR p_tipo IS NULL)
+      AND (tb_cad_parceiro_negocio.nome_fantasia ILIKE '%' || p_nome_fantasia || '%' OR p_nome_fantasia IS NULL)
+      AND (tb_cad_parceiro_negocio.razao_social ILIKE '%' || p_razao_social || '%' OR p_razao_social IS NULL)
+      AND (tb_cad_parceiro_negocio.codigo_pais = p_codigo_pais OR p_codigo_pais IS NULL)
+      AND (tb_cad_parceiro_negocio.codigo_cidade = p_codigo_cidade OR p_codigo_cidade IS NULL)
+      AND (tb_cad_parceiro_negocio.codigo_estado = p_codigo_estado OR p_codigo_estado IS NULL);
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_gen_filtro_parceiro_negocio(p_codigo_empresa integer, p_documento character varying, p_codigo_pais bigint, p_codigo_cidade bigint, p_codigo_estado integer, p_telefone character varying, p_email character varying, p_tipo character, p_nome_fantasia character varying, p_razao_social character varying) OWNER TO postgres;
+
+--
 -- Name: fn_listar_ativos(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -405,6 +455,54 @@ $$;
 
 
 ALTER FUNCTION public.fn_select_cad_ativo_dados(p_codigo_empresa integer, p_codigo integer, p_codigo_cliente integer, p_numero_serie character varying, p_codigo_fabricante integer, p_modelo character varying, p_observacao character varying) OWNER TO postgres;
+
+--
+-- Name: fn_select_estados(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_select_estados() RETURNS TABLE(codigo_estado integer, uf character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT 
+	tb_stc_estados.id, 
+	tb_stc_estados.uf 
+	FROM tb_stc_estados;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_select_estados() OWNER TO postgres;
+
+--
+-- Name: fn_select_municipios(character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_select_municipios(p_uf character varying) RETURNS TABLE(codigo_municipio integer, nome_municipio character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT id, nome FROM municipio WHERE uf = p_uf;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_select_municipios(p_uf character varying) OWNER TO postgres;
+
+--
+-- Name: fn_select_paises(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_select_paises() RETURNS TABLE(codigo_pais integer, nome_pais character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT id, nome_pt FROM pais;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_select_paises() OWNER TO postgres;
 
 --
 -- Name: sp_atualizar_parceiro_negocio(integer, character varying, boolean, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -1296,6 +1394,79 @@ CREATE TABLE public.max_codigo (
 ALTER TABLE public.max_codigo OWNER TO postgres;
 
 --
+-- Name: municipio; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.municipio (
+    id integer NOT NULL,
+    codigo integer NOT NULL,
+    nome character varying(255) NOT NULL,
+    uf character(2) NOT NULL
+);
+
+
+ALTER TABLE public.municipio OWNER TO postgres;
+
+--
+-- Name: municipio_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.municipio_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.municipio_id_seq OWNER TO postgres;
+
+--
+-- Name: municipio_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.municipio_id_seq OWNED BY public.municipio.id;
+
+
+--
+-- Name: pais; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pais (
+    id integer NOT NULL,
+    nome character varying(255),
+    nome_pt character varying(255),
+    sigla character(2),
+    bacen integer
+);
+
+
+ALTER TABLE public.pais OWNER TO postgres;
+
+--
+-- Name: pais_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pais_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pais_id_seq OWNER TO postgres;
+
+--
+-- Name: pais_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pais_id_seq OWNED BY public.pais.id;
+
+
+--
 -- Name: tb_agendamento_ativo; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1441,7 +1612,6 @@ CREATE TABLE public.tb_cad_parceiro_negocio (
     codigo integer NOT NULL,
     is_cnpj boolean NOT NULL,
     documento character varying(18) NOT NULL,
-    estado character(2),
     cep character varying(10),
     telefone character varying(20),
     email character varying(255),
@@ -1457,6 +1627,7 @@ CREATE TABLE public.tb_cad_parceiro_negocio (
     contato character varying,
     codigo_pais bigint,
     codigo_cidade bigint,
+    codigo_estado integer,
     CONSTRAINT tb_cad_parceiro_negocio_tipo_parceiro_check CHECK ((tipo_parceiro = ANY (ARRAY['C'::bpchar, 'F'::bpchar, 'A'::bpchar])))
 );
 
@@ -1770,6 +1941,22 @@ CREATE TABLE public.tb_manutencao_ordem_servico_tecnico (
 ALTER TABLE public.tb_manutencao_ordem_servico_tecnico OWNER TO postgres;
 
 --
+-- Name: tb_stc_estados; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tb_stc_estados (
+    id integer NOT NULL,
+    nome character varying(75) DEFAULT NULL::character varying,
+    uf character varying(2) DEFAULT NULL::character varying,
+    ibge integer,
+    pais integer,
+    ddd character varying(50) DEFAULT NULL::character varying
+);
+
+
+ALTER TABLE public.tb_stc_estados OWNER TO postgres;
+
+--
 -- Name: tb_stc_nivel_prioridade; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1829,6 +2016,20 @@ CREATE TABLE public.tb_stc_tipo_manutencao (
 ALTER TABLE public.tb_stc_tipo_manutencao OWNER TO postgres;
 
 --
+-- Name: municipio id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.municipio ALTER COLUMN id SET DEFAULT nextval('public.municipio_id_seq'::regclass);
+
+
+--
+-- Name: pais id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pais ALTER COLUMN id SET DEFAULT nextval('public.pais_id_seq'::regclass);
+
+
+--
 -- Name: tb_ambientes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -1868,6 +2069,22 @@ ALTER TABLE ONLY public.tb_cad_usuario ALTER COLUMN codigo SET DEFAULT nextval('
 --
 
 ALTER TABLE ONLY public.tb_stc_nivel_prioridade ALTER COLUMN codigo SET DEFAULT nextval('public.tb_stc_nivel_prioridade_codigo_seq'::regclass);
+
+
+--
+-- Name: municipio municipio_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.municipio
+    ADD CONSTRAINT municipio_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pais pais_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pais
+    ADD CONSTRAINT pais_pkey PRIMARY KEY (id);
 
 
 --
