@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="monolith.parceiroNegocio.UserControl1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:monolith.parceiroNegocio"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="LightGray">
+        
+        <TabControl x:Name="MainTabControl" Margin="10">
+            <TabItem Header="Listagem de Parceiros">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Primeira linha de StackPanel -->
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <StackPanel>
+                                <Label Content="Documento"/>
+                                <TextBox Name="txtDocumento" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Nome Fantasia"/>
+                                <TextBox Name="txtNomeFantasia" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Razão Social"/>
+                                <TextBox Name="txtRazaoSocial" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="E-Mail"/>
+                                <TextBox Name="txtEmail" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Contato"/>
+                                <TextBox Name="txtContato" Width="100" Margin="5"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Segunda linha de StackPanel -->
+                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                            <StackPanel>
+                                <Label Content="País"/>
+                                <TextBox Name="txtPais" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Cidade"/>
+                                <TextBox Name="txtCidade" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Bairro"/>
+                                <TextBox Name="txtBairro" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Logradouro"/>
+                                <TextBox Name="txtLogradouro" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Número"/>
+                                <TextBox Name="txtNumero" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="cep"/>
+                                <TextBox Name="txtCep" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Complemento"/>
+                                <TextBox Name="txtComplemento" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <!-- Adicione mais controles conforme necessário -->
+                        </StackPanel>
+                    </Grid>
+
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Dados do Parceiro">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="Dados"></TextBlock>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
