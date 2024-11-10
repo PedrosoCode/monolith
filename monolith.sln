@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monolith", "monolith.csproj", "{F3326AE2-DE37-4020-A682-C8FB07D69FF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "monolith", "monolith.csproj", "{F3326AE2-DE37-4020-A682-C8FB07D69FF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{3DDC0700-C4C2-4465-BAB2-C8A152F407F3}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\Monolith_icon.ico = Resources\Monolith_icon.ico
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
