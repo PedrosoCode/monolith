@@ -28,7 +28,25 @@ namespace monolith.parceiroNegocio
             //carregar combos
             CarregarPaises();
             CarregarEstados();
+            PopularComboTipo();
         }
+
+        private void PopularComboTipo()
+        {
+            // Lista de opções para o ComboBox
+            var opcoes = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("A", "Ambos"),
+                new KeyValuePair<string, string>("C", "Cliente"),
+                new KeyValuePair<string, string>("F", "Fornecedor")
+            };
+
+            // Configura a fonte de dados do ComboBox
+            cboTipo.ItemsSource = opcoes;
+            cboTipo.DisplayMemberPath = "Value"; // Mostra o texto "Ativo", "Inativo", "Todos"
+            cboTipo.SelectedValuePath = "Key";   // Usa "A", "I", "T" como valor selecionado
+        }
+
 
         private void CarregarPaises()
         {
@@ -66,7 +84,7 @@ namespace monolith.parceiroNegocio
 
         private void CarregarEstados()
         {
-            var estados = new List<KeyValuePair<string, string>>(); // Key: uf (sigla), Value: nome do estado
+            var estados = new List<KeyValuePair<int, string>>(); // Key: id (código), Value: nome do estado
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
 
             using (var conn = new NpgsqlConnection(connectionString))
@@ -80,9 +98,9 @@ namespace monolith.parceiroNegocio
                         {
                             while (reader.Read())
                             {
-                                string uf = reader["uf"].ToString();
+                                int id = Convert.ToInt32(reader["id"]); // Pegue o id do estado
                                 string nome = reader["nome"].ToString();
-                                estados.Add(new KeyValuePair<string, string>(uf, nome));
+                                estados.Add(new KeyValuePair<int, string>(id, nome));
                             }
                         }
                     }
@@ -95,8 +113,9 @@ namespace monolith.parceiroNegocio
 
             cboEstado.ItemsSource = estados;
             cboEstado.DisplayMemberPath = "Value"; // Mostra o nome do estado
-            cboEstado.SelectedValuePath = "Key"; // Usa a sigla (uf) como valor selecionado
+            cboEstado.SelectedValuePath = "Key"; // Usa o id (código) como valor selecionado
         }
+
 
 
         private void CarregarMunicipios(string ufEstado)
@@ -109,7 +128,7 @@ namespace monolith.parceiroNegocio
                 try
                 {
                     conn.Open();
-                    using (var cmd = new NpgsqlCommand("SELECT * FROM public.fn_select_municipios(@p_uf)", conn))
+                    using (var cmd = new NpgsqlCommand("SELECT id, nome FROM municipio WHERE uf = @p_uf", conn))
                     {
                         cmd.Parameters.AddWithValue("@p_uf", ufEstado);
 
@@ -131,25 +150,57 @@ namespace monolith.parceiroNegocio
             }
 
             cboCidade.ItemsSource = municipios;
-            cboCidade.DisplayMemberPath = "Value";
-            cboCidade.SelectedValuePath = "Key";
+            cboCidade.DisplayMemberPath = "Value"; // Exibe o nome do município
+            cboCidade.SelectedValuePath = "Key"; // Usa o código (id) do município como valor selecionado
             cboCidade.IsEnabled = municipios.Count > 0; // Habilita o ComboBox apenas se houver municípios carregados
         }
 
+        private string? ObterUfPorId(int idEstado)
+        {
+            string? uf = null;
+            string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
+
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand("SELECT uf FROM tb_stc_estados WHERE id = @id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", idEstado);
+                        uf = cmd.ExecuteScalar()?.ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao obter a sigla do estado: {ex.Message}");
+                }
+            }
+
+            return uf;
+        }
+
+
+
         private void cboEstado_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cboEstado.SelectedValue is string selectedEstadoUF)
+            if (cboEstado.SelectedValue is int selectedEstadoId)
             {
-                // Carregar municípios apenas se uma sigla de estado (uf) estiver selecionada
-                CarregarMunicipios(selectedEstadoUF);
-            }
-            else
-            {
-                // Desabilita o ComboBox de municípios se nenhum estado estiver selecionado
-                cboCidade.ItemsSource = null;
-                cboCidade.IsEnabled = false;
+                // Obtenha a sigla `uf` do estado selecionado
+                string? ufEstado = ObterUfPorId(selectedEstadoId);
+
+                if (!string.IsNullOrEmpty(ufEstado))
+                {
+                    CarregarMunicipios(ufEstado);
+                }
+                else
+                {
+                    cboCidade.ItemsSource = null;
+                    cboCidade.IsEnabled = false;
+                }
             }
         }
+
 
 
 
@@ -159,12 +210,13 @@ namespace monolith.parceiroNegocio
             string? sDocumento = Utils.ParseNullableString(txtDocumento.Text.Trim());
             int? iCodigoPais = Utils.ParseNullableInt(cboPais.SelectedValue);
             int? iCodigoCidade = Utils.ParseNullableInt(cboCidade.SelectedValue);
-            int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue);
+            int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue); 
             string? sTelefone = Utils.ParseNullableString(txtTelefone.Text.Trim());
             string? sEmail = Utils.ParseNullableString(txtEmail.Text.Trim());
-            string? sTipo = Utils.ParseNullableString(cboTipo.SelectedValue);
+            string? sTipo = Utils.ParseNullableString(cboTipo.SelectedValue?.ToString());
             string? sNomeFantasia = Utils.ParseNullableString(txtNomeFantasia.Text.Trim());
             string? sRazaoSocial = Utils.ParseNullableString(txtRazaoSocial.Text.Trim());
+
 
             CarregarParceiros(iCodigoEmpresa,
                               sDocumento,
@@ -177,6 +229,7 @@ namespace monolith.parceiroNegocio
                               sNomeFantasia,
                               sRazaoSocial);
         }
+
 
         private void CarregarParceiros(int codigoEmpresa,
                                        string? sDocumento,

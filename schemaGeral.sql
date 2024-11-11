@@ -90,9 +90,9 @@ BEGIN
         ON pais.id = tb_cad_parceiro_negocio.codigo_pais
     LEFT JOIN tb_stc_estados
         ON tb_stc_estados.id = tb_cad_parceiro_negocio.codigo_estado
-    WHERE (tb_cad_parceiro_negocio.documento = p_documento OR p_documento IS NULL)
-      AND (tb_cad_parceiro_negocio.telefone = p_telefone OR p_telefone IS NULL)
-      AND (tb_cad_parceiro_negocio.email = p_email OR p_email IS NULL)
+    WHERE (tb_cad_parceiro_negocio.documento ILIKE '%' || p_documento || '%' OR p_documento IS NULL)
+      AND (tb_cad_parceiro_negocio.telefone ILIKE '%' || p_telefone || '%' OR p_telefone IS NULL)
+      AND (tb_cad_parceiro_negocio.email ILIKE '%' || p_email || '%' OR p_email IS NULL)
       AND (tb_cad_parceiro_negocio.tipo_parceiro = p_tipo OR p_tipo IS NULL)
       AND (tb_cad_parceiro_negocio.nome_fantasia ILIKE '%' || p_nome_fantasia || '%' OR p_nome_fantasia IS NULL)
       AND (tb_cad_parceiro_negocio.razao_social ILIKE '%' || p_razao_social || '%' OR p_razao_social IS NULL)
