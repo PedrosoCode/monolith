@@ -25,15 +25,14 @@ namespace monolith.parceiroNegocio
             InitializeComponent();
             MainTabControl.SelectedItem = TabListagem;
 
-            //carregar combos
-            CarregarPaises();
-            CarregarEstados();
+            // Carregar combos
+            CarregarPaisesParaListagem();
+            CarregarEstadosParaListagem();
             PopularComboTipo();
         }
 
         private void PopularComboTipo()
         {
-            // Lista de opções para o ComboBox
             var opcoes = new List<KeyValuePair<string, string>>()
             {
                 new KeyValuePair<string, string>("A", "Ambos"),
@@ -41,14 +40,28 @@ namespace monolith.parceiroNegocio
                 new KeyValuePair<string, string>("F", "Fornecedor")
             };
 
-            // Configura a fonte de dados do ComboBox
             cboTipo.ItemsSource = opcoes;
-            cboTipo.DisplayMemberPath = "Value"; // Mostra o texto "Ativo", "Inativo", "Todos"
-            cboTipo.SelectedValuePath = "Key";   // Usa "A", "I", "T" como valor selecionado
+            cboTipo.DisplayMemberPath = "Value";
+            cboTipo.SelectedValuePath = "Key";
         }
 
+        private void CarregarPaisesParaListagem()
+        {
+            var paises = CarregarPaises();
+            cboPais.ItemsSource = paises;
+            cboPais.DisplayMemberPath = "Value";
+            cboPais.SelectedValuePath = "Key";
+        }
 
-        private void CarregarPaises()
+        private void CarregarEstadosParaListagem()
+        {
+            var estados = CarregarEstados();
+            cboEstado.ItemsSource = estados;
+            cboEstado.DisplayMemberPath = "Value";
+            cboEstado.SelectedValuePath = "Key";
+        }
+
+        private List<KeyValuePair<int, string>> CarregarPaises()
         {
             var paises = new List<KeyValuePair<int, string>>();
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
@@ -77,14 +90,12 @@ namespace monolith.parceiroNegocio
                 }
             }
 
-            cboPais.ItemsSource = paises;
-            cboPais.DisplayMemberPath = "Value"; // Exibe o nome do país
-            cboPais.SelectedValuePath = "Key"; // Usa o código como valor selecionado
+            return paises;
         }
 
-        private void CarregarEstados()
+        private List<KeyValuePair<int, string>> CarregarEstados()
         {
-            var estados = new List<KeyValuePair<int, string>>(); // Key: id (código), Value: nome do estado
+            var estados = new List<KeyValuePair<int, string>>();
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
 
             using (var conn = new NpgsqlConnection(connectionString))
@@ -98,7 +109,7 @@ namespace monolith.parceiroNegocio
                         {
                             while (reader.Read())
                             {
-                                int id = Convert.ToInt32(reader["id"]); // Pegue o id do estado
+                                int id = Convert.ToInt32(reader["id"]);
                                 string nome = reader["nome"].ToString();
                                 estados.Add(new KeyValuePair<int, string>(id, nome));
                             }
@@ -111,14 +122,10 @@ namespace monolith.parceiroNegocio
                 }
             }
 
-            cboEstado.ItemsSource = estados;
-            cboEstado.DisplayMemberPath = "Value"; // Mostra o nome do estado
-            cboEstado.SelectedValuePath = "Key"; // Usa o id (código) como valor selecionado
+            return estados;
         }
 
-
-
-        private void CarregarMunicipios(string ufEstado)
+        private List<KeyValuePair<int, string>> CarregarMunicipios(string ufEstado)
         {
             var municipios = new List<KeyValuePair<int, string>>();
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
@@ -149,10 +156,7 @@ namespace monolith.parceiroNegocio
                 }
             }
 
-            cboCidade.ItemsSource = municipios;
-            cboCidade.DisplayMemberPath = "Value"; // Exibe o nome do município
-            cboCidade.SelectedValuePath = "Key"; // Usa o código (id) do município como valor selecionado
-            cboCidade.IsEnabled = municipios.Count > 0; // Habilita o ComboBox apenas se houver municípios carregados
+            return municipios;
         }
 
         private string? ObterUfPorId(int idEstado)
@@ -180,28 +184,36 @@ namespace monolith.parceiroNegocio
             return uf;
         }
 
-
-
         private void cboEstado_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cboEstado.SelectedValue is int selectedEstadoId)
+            var comboBox = sender as ComboBox;
+
+            // Verificar qual ComboBox disparou o evento
+            if (comboBox?.SelectedValue is int selectedEstadoId)
             {
-                // Obtenha a sigla `uf` do estado selecionado
                 string? ufEstado = ObterUfPorId(selectedEstadoId);
 
                 if (!string.IsNullOrEmpty(ufEstado))
                 {
-                    CarregarMunicipios(ufEstado);
-                }
-                else
-                {
-                    cboCidade.ItemsSource = null;
-                    cboCidade.IsEnabled = false;
+                    var municipios = CarregarMunicipios(ufEstado);
+
+                    if (comboBox.Name == "cboEstado") // Aba de Listagem
+                    {
+                        cboCidade.ItemsSource = municipios;
+                        cboCidade.DisplayMemberPath = "Value";
+                        cboCidade.SelectedValuePath = "Key";
+                        cboCidade.IsEnabled = municipios.Count > 0;
+                    }
+                    else if (comboBox.Name == "cboEstadoDados") // Aba de Dados
+                    {
+                        cboCidadeDados.ItemsSource = municipios;
+                        cboCidadeDados.DisplayMemberPath = "Value";
+                        cboCidadeDados.SelectedValuePath = "Key";
+                        cboCidadeDados.IsEnabled = municipios.Count > 0;
+                    }
                 }
             }
         }
-
-
 
 
         private void BtnFiltrar_Click(object sender, RoutedEventArgs e)
@@ -210,13 +222,12 @@ namespace monolith.parceiroNegocio
             string? sDocumento = Utils.ParseNullableString(txtDocumento.Text.Trim());
             int? iCodigoPais = Utils.ParseNullableInt(cboPais.SelectedValue);
             int? iCodigoCidade = Utils.ParseNullableInt(cboCidade.SelectedValue);
-            int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue); 
+            int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue);
             string? sTelefone = Utils.ParseNullableString(txtTelefone.Text.Trim());
             string? sEmail = Utils.ParseNullableString(txtEmail.Text.Trim());
             string? sTipo = Utils.ParseNullableString(cboTipo.SelectedValue?.ToString());
             string? sNomeFantasia = Utils.ParseNullableString(txtNomeFantasia.Text.Trim());
             string? sRazaoSocial = Utils.ParseNullableString(txtRazaoSocial.Text.Trim());
-
 
             CarregarParceiros(iCodigoEmpresa,
                               sDocumento,
@@ -229,7 +240,6 @@ namespace monolith.parceiroNegocio
                               sNomeFantasia,
                               sRazaoSocial);
         }
-
 
         private void CarregarParceiros(int codigoEmpresa,
                                        string? sDocumento,
@@ -279,6 +289,7 @@ namespace monolith.parceiroNegocio
                             {
                                 parceiros.Add(new clsParceiro
                                 {
+                                    Codigo_parceiro = Convert.ToInt32(reader["codigo_parceiro"]),
                                     Codigo_uf_parceiro = reader["codigo_uf_parceiro"]?.ToString(),
                                     Documento = reader["documento_parceiro"]?.ToString(),
                                     Telefone_parceiro = reader["telefone_parceiro"]?.ToString(),
@@ -306,8 +317,85 @@ namespace monolith.parceiroNegocio
             dgParceirosListagem.ItemsSource = parceiros;
         }
 
+        private void BtnEditar_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null && button.Tag != null)
+            {
+                int codigoParceiro = (int)button.Tag;
+                CarregarDadosParceiro(codigoParceiro, Globals.GlobalCodigoEmpresa);
+            }
+        }
+
+        private void CarregarDadosParceiro(int codigoParceiro, int codigoEmpresa)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
+
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, @p_codigo_empresa)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiro);
+                        cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                txtDocumentoDados.Text = reader["documento"]?.ToString();
+                                txtNomeFantasiaDados.Text = reader["nome_fantasia"]?.ToString();
+                                txtRazaoSocialDados.Text = reader["razao_social"]?.ToString();
+                                txtEmailDados.Text = reader["email"]?.ToString();
+                                txtContatoDados.Text = reader["contato"]?.ToString();
+                                txtTelefoneDados.Text = reader["telefone"]?.ToString();
+
+                                cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
+                                {
+                                    new KeyValuePair<string, string>("A", "Ambos"),
+                                    new KeyValuePair<string, string>("C", "Cliente"),
+                                    new KeyValuePair<string, string>("F", "Fornecedor")
+                                };
+                                cboTipoDados.DisplayMemberPath = "Value";
+                                cboTipoDados.SelectedValuePath = "Key";
+                                cboTipoDados.SelectedValue = reader["tipo_parceiro"]?.ToString();
+
+                                var paises = CarregarPaises();
+                                cboPaisDados.ItemsSource = paises;
+                                cboPaisDados.DisplayMemberPath = "Value";
+                                cboPaisDados.SelectedValuePath = "Key";
+                                cboPaisDados.SelectedValue = Convert.ToInt32(reader["codigo_pais"]);
+
+                                var estados = CarregarEstados();
+                                cboEstadoDados.ItemsSource = estados;
+                                cboEstadoDados.DisplayMemberPath = "Value";
+                                cboEstadoDados.SelectedValuePath = "Key";
+                                cboEstadoDados.SelectedValue = Convert.ToInt32(reader["codigo_estado"]);
+
+                                string ufEstado = ObterUfPorId(Convert.ToInt32(reader["codigo_estado"]));
+                                var municipios = CarregarMunicipios(ufEstado);
+                                cboCidadeDados.ItemsSource = municipios;
+                                cboCidadeDados.DisplayMemberPath = "Value";
+                                cboCidadeDados.SelectedValuePath = "Key";
+                                cboCidadeDados.SelectedValue = Convert.ToInt32(reader["codigo_cidade"]);
+
+                                MainTabControl.SelectedItem = TabDados;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar os detalhes do parceiro: {ex.Message}");
+                }
+            }
+        }
+
         public class clsParceiro
         {
+            public int Codigo_parceiro { get; set; }
             public string Codigo_uf_parceiro { get; set; }
             public string Documento { get; set; }
             public string Telefone_parceiro { get; set; }

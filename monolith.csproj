@@ -11,10 +11,15 @@
 
   <ItemGroup>
     <None Remove="Resources\Monolith_icon.ico" />
+    <None Remove="Resources\save_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\Monolith_icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\save_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
