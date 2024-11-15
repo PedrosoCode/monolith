@@ -13,6 +13,21 @@ namespace monolith
             InitializeComponent();
         }
 
+        private void BtnFecharAba_Click(object sender, RoutedEventArgs e)
+        {
+            // Verifica se há uma aba selecionada
+            if (MainTabControl.SelectedItem is TabItem selectedTab)
+            {
+                // Remove a aba selecionada
+                MainTabControl.Items.Remove(selectedTab);
+            }
+            else
+            {
+                MessageBox.Show("Nenhuma aba selecionada para fechar.", "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+
         // Evento de clique para abrir o UserControl cadAtivos em uma nova aba
         private void MenuItem_AbrirCadAtivos_Click(object sender, RoutedEventArgs e)
         {

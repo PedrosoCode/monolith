@@ -5,13 +5,39 @@
         xmlns:ativos="clr-namespace:monolith.ativos"
         Title="Home" Height="600" Width="1000">
     <DockPanel LastChildFill="True">
-        <!-- Menu superior -->
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Cadastros">
-                <MenuItem Header="Abrir Cadastro de Ativos" Name="MenuCadAtivos" Click="MenuItem_AbrirCadAtivos_Click"/>
-                <MenuItem Header="Abrir Cadastro de Parceiros de negócio" Name="MenuCadParceiros" Click="MenuItem_AbrirCadAtivos_Click"/>
-            </MenuItem>
-        </Menu>
+        <!-- Topo com Menu e Botão -->
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!-- Espaço para o menu -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Botão -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Menu -->
+            <Menu Grid.Column="0" VerticalAlignment="Top">
+                <MenuItem Header="Cadastros">
+                    <MenuItem Header="Abrir Cadastro de Ativos" Name="MenuCadAtivos" Click="MenuItem_AbrirCadAtivos_Click"/>
+                    <MenuItem Header="Abrir Cadastro de Parceiros de negócio" Name="MenuCadParceiros" Click="MenuItem_AbrirCadAtivos_Click"/>
+                </MenuItem>
+            </Menu>
+
+            <!-- Botão "X" -->
+            <Button Grid.Column="1"
+                    Content="x"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Margin="5"
+                    Padding="0"
+                    Width="25"
+                    Height="25"
+                    ToolTip="Fechar aba atual"
+                    Click="BtnFecharAba_Click"
+                    FontSize="14"
+                    FontWeight="Bold"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"/>
+        </Grid>
 
         <!-- TabControl principal -->
         <TabControl Name="MainTabControl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
