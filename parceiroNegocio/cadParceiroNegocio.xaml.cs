@@ -20,8 +20,16 @@ namespace monolith.parceiroNegocio
 {
     public partial class cadParceiroNegocio : UserControl
     {
+
+        private int? codigoParceiroAtual;
+        clsCadParceiroNegocio FuncsParceiroNegocio = new clsCadParceiroNegocio();
+
+
+
         public cadParceiroNegocio()
         {
+
+
             InitializeComponent();
             MainTabControl.SelectedItem = TabListagem;
 
@@ -322,12 +330,53 @@ namespace monolith.parceiroNegocio
             var button = sender as Button;
             if (button != null && button.Tag != null)
             {
-                int codigoParceiro = (int)button.Tag;
-                CarregarDadosParceiro(codigoParceiro, Globals.GlobalCodigoEmpresa);
+                codigoParceiroAtual = button.Tag as int?;
+
+                CarregarDadosParceiro(codigoParceiroAtual, Globals.GlobalCodigoEmpresa);
             }
         }
 
-        private void CarregarDadosParceiro(int codigoParceiro, int codigoEmpresa)
+        private void btnSalvar_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            String sDocumento = txtDocumentoDados.Text.Trim();
+            String sNomeFantasia = txtNomeFantasiaDados.Text.Trim();
+            String sRazaoSocial = txtRazaoSocialDados.Text.Trim();
+            String sEmail = txtEmailDados.Text.Trim();
+            String sContato = txtContatoDados.Text.Trim();
+            String sTelefone = txtTelefoneDados.Text.Trim();
+            String? sTipo = cboTipoDados.SelectedValue as String;
+            int? iCodigoPais = cboPaisDados.SelectedValue as int?;
+            int? iCodigoEstado = cboEstadoDados.SelectedValue as int?;
+            int? iCodigocidade = cboCidadeDados.SelectedValue as int?;
+
+
+            if (codigoParceiroAtual == null)
+            {
+                
+            }
+            else
+            {
+                FuncsParceiroNegocio.updateParceiroNegocio( codigoParceiroAtual,
+                                                             sDocumento,
+                                                             sNomeFantasia,
+                                                             sRazaoSocial,
+                                                             sEmail,
+                                                             sContato,
+                                                             sTelefone,
+                                                             sTipo,
+                                                             iCodigoPais,
+                                                             iCodigoEstado,
+                                                             iCodigocidade
+                                                            );
+            }
+
+           
+        }
+
+        private void CarregarDadosParceiro(int? codigoParceiroAtual, 
+                                           int? codigoEmpresa)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
 
@@ -338,7 +387,7 @@ namespace monolith.parceiroNegocio
                     conn.Open();
                     using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, @p_codigo_empresa)", conn))
                     {
-                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiro);
+                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
                         cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa);
 
                         using (var reader = cmd.ExecuteReader())

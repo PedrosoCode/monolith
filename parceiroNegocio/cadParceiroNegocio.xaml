@@ -213,21 +213,21 @@
                                           Margin="6"/>
                             </StackPanel>
                         </StackPanel>
-                        <Button Grid.Row="3" Grid.Column="1"
+                        <!--<Button Grid.Row="3" Grid.Column="1"
                                  HorizontalAlignment="Right"
                                  VerticalAlignment="Bottom"
                                  Margin="10"
                                  Width="120"
                                  Click="BtnEditar_Click">
                             <StackPanel Orientation="Horizontal">
-                                <!-- Ícone -->
+                                 Ícone 
                                 <Image Source="pack://application:,,,/monolith;component/Resources/save_icon.png" Width="16" Height="16" Margin="0,0,5,0"/>
 
 
-                                <!-- Texto -->
+                                 Texto 
                                 <TextBlock Text="Salvar" VerticalAlignment="Center"/>
                             </StackPanel>
-                        </Button>
+                        </Button>-->
 
                     </Grid>
                 </ScrollViewer>
@@ -240,7 +240,15 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="Excluir" Width="70" Height="20" Margin="5"  Background="IndianRed" FontStyle="Italic"/>
                     <Button Content="Novo" Width="70" Height="20" Margin="5" />
-                    <Button Content="Salvar" Width="70" Height="20" Margin="5" />
+                    <Button Width="70" Height="20" Margin="5"
+                            Click="btnSalvar_Click"
+                            >
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="pack://application:,,,/monolith;component/Resources/save_icon.png" Width="16" Height="16" Margin="0,0,5,0"/>
+                            <TextBlock Text="Salvar" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button Content="filtrar" Width="70" Height="20" Margin="5" Click="BtnFiltrar_Click" />
                 </StackPanel>
             </Border>

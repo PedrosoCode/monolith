@@ -553,37 +553,34 @@ $$;
 ALTER FUNCTION public.fn_select_paises() OWNER TO postgres;
 
 --
--- Name: sp_atualizar_parceiro_negocio(integer, character varying, boolean, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: sp_atualizar_parceiro_negocio(integer, integer, character varying, character varying, character varying, character varying, character varying, character varying, character, bigint, integer, bigint); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_nome_razao_social character varying, IN p_is_cnpj boolean, IN p_documento character varying, IN p_endereco character varying, IN p_cidade character varying, IN p_estado character varying, IN p_cep character varying, IN p_telefone character varying, IN p_email character varying, IN p_tipo_parceiro character varying, IN p_codigo_empresa integer)
+CREATE PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint)
     LANGUAGE plpgsql
     AS $$
 BEGIN
     UPDATE public.tb_cad_parceiro_negocio
     SET 
-        nome_razao_social = p_nome_razao_social,
-        is_cnpj = p_is_cnpj,
-        documento = p_documento,
-        endereco = p_endereco,
-        cidade = p_cidade,
-        estado = p_estado,
-        cep = p_cep,
-        telefone = p_telefone,
-        email = p_email,
-        tipo_parceiro = p_tipo_parceiro
+		documento = p_documento,
+		nome_fantasia = p_nome_fantasia,
+		razao_social = p_razao_social,
+		email = p_email,
+		contato = p_contato,
+		telefone = p_telefone,
+		tipo_parceiro = p_tipo,
+		codigo_pais = p_codigo_pais,
+		codigo_estado = p_codigo_estado,
+		codigo_cidade = p_codigo_cidade
+		
     WHERE 
         codigo = p_codigo 
         AND codigo_empresa = p_codigo_empresa;
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Parceiro de negócio não encontrado para atualização.';
-    END IF;
 END;
 $$;
 
 
-ALTER PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_nome_razao_social character varying, IN p_is_cnpj boolean, IN p_documento character varying, IN p_endereco character varying, IN p_cidade character varying, IN p_estado character varying, IN p_cep character varying, IN p_telefone character varying, IN p_email character varying, IN p_tipo_parceiro character varying, IN p_codigo_empresa integer) OWNER TO postgres;
+ALTER PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint) OWNER TO postgres;
 
 --
 -- Name: sp_cadastro_basico_ambiente(character varying); Type: PROCEDURE; Schema: public; Owner: postgres
