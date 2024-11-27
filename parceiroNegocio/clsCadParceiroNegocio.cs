@@ -75,6 +75,12 @@ namespace monolith.parceiroNegocio
                             throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
                         }
 
+
+                        if (sCep.Length != 8)
+                        {
+                            throw new ArgumentException("CEP inválido.");
+                        }
+
                         // Define os parâmetros da stored procedure
                         command.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
                         command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);
@@ -104,6 +110,40 @@ namespace monolith.parceiroNegocio
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao atualizar os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        
+
+        public void excluirParceiroNegocio(int? codigoParceiroAtual)
+
+
+        {
+            try
+            {
+                string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
+                using (var conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    using (var command = new NpgsqlCommand("CALL sp_delete_cadastro_parceiro_negocio(@p_codigo_empresa,"    +
+                                                                                                     "@p_codigo_parceiro" +
+                                                                                                     ")"
+                                                                                                     , conn))
+                    {
+
+                        command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);
+                        command.Parameters.AddWithValue("@p_codigo_parceiro", codigoParceiroAtual);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("Parceiro deletado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao deletar os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -167,6 +207,12 @@ namespace monolith.parceiroNegocio
                         else
                         {
                             throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
+                        }
+
+
+                        if (sCep.Length != 8)
+                        {
+                            throw new ArgumentException("CEP inválido.");
                         }
 
                         command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);

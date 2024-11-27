@@ -123,6 +123,13 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Ações" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Excluir" Click="BtnExcluir_Click"  Tag="{Binding Codigo_parceiro}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
@@ -261,7 +268,7 @@
         <Canvas VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="80" Width="Auto" Margin="20,0,0,5">
             <Border Background="GhostWhite" BorderThickness="1" BorderBrush="DarkSlateGray" Width="360" Height="35" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Content="Excluir" Width="70" Height="20" Margin="5"  Background="IndianRed" FontStyle="Italic"/>
+                    <!--<Button Content="Excluir" Width="70" Height="20" Margin="5"  Background="IndianRed" FontStyle="Italic"/>-->
                     <Button Content="Novo" Width="70" Height="20" Margin="5" Click="BtnNovo_Click" />
                     <Button Width="70" Height="20" Margin="5"
                             Click="btnSalvar_Click"

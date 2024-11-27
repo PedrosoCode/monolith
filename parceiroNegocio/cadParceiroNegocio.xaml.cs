@@ -43,22 +43,22 @@ namespace monolith.parceiroNegocio
         private void NovoParceiro()
         {
 
-            codigoParceiroAtual             = null;
-            txtDocumentoDados.Text          = "";
-            txtNomeFantasiaDados.Text       = "";
-            txtRazaoSocialDados.Text        = "";
-            txtEmailDados.Text              = "";
-            txtContatoDados.Text            = "";
-            txtTelefoneDados.Text           = "";
-            cboTipoDados.SelectedValue      = 0;
-            cboPaisDados.SelectedValue      = 0;
-            cboEstadoDados.SelectedValue    = 0;
-            cboCidadeDados.SelectedValue    = 0;
-            txtCEPDados.Text                = "";
-            txtLogradouroDados.Text         = "";
-            txtNumeroDados.Text             = "";
-            txtComplementoDados.Text        = "";
-            txtBairroDados.Text             = "";
+            codigoParceiroAtual = null;
+            txtDocumentoDados.Text = "";
+            txtNomeFantasiaDados.Text = "";
+            txtRazaoSocialDados.Text = "";
+            txtEmailDados.Text = "";
+            txtContatoDados.Text = "";
+            txtTelefoneDados.Text = "";
+            cboTipoDados.SelectedValue = 0;
+            cboPaisDados.SelectedValue = 0;
+            cboEstadoDados.SelectedValue = 0;
+            cboCidadeDados.SelectedValue = 0;
+            txtCEPDados.Text = "";
+            txtLogradouroDados.Text = "";
+            txtNumeroDados.Text = "";
+            txtComplementoDados.Text = "";
+            txtBairroDados.Text = "";
 
             cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
             {
@@ -272,30 +272,37 @@ namespace monolith.parceiroNegocio
             }
         }
 
+        private void filtrar()
+        {
+
+        int iCodigoEmpresa = Globals.GlobalCodigoEmpresa;
+        string? sDocumento = Utils.ParseNullableString(txtDocumento.Text.Trim());
+        int? iCodigoPais = Utils.ParseNullableInt(cboPais.SelectedValue);
+        int? iCodigoCidade = Utils.ParseNullableInt(cboCidade.SelectedValue);
+        int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue);
+        string? sTelefone = Utils.ParseNullableString(txtTelefone.Text.Trim());
+        string? sEmail = Utils.ParseNullableString(txtEmail.Text.Trim());
+        string? sTipo = Utils.ParseNullableString(cboTipo.SelectedValue?.ToString());
+        string? sNomeFantasia = Utils.ParseNullableString(txtNomeFantasia.Text.Trim());
+        string? sRazaoSocial = Utils.ParseNullableString(txtRazaoSocial.Text.Trim());
+
+        CarregarParceiros(iCodigoEmpresa,
+                          sDocumento,
+                          iCodigoPais,
+                          iCodigoCidade,
+                          iCodigoEstado,
+                          sTelefone,
+                          sEmail,
+                          sTipo,
+                          sNomeFantasia,
+                          sRazaoSocial);
+    }
 
         private void BtnFiltrar_Click(object sender, RoutedEventArgs e)
         {
-            int iCodigoEmpresa = Globals.GlobalCodigoEmpresa;
-            string? sDocumento = Utils.ParseNullableString(txtDocumento.Text.Trim());
-            int? iCodigoPais = Utils.ParseNullableInt(cboPais.SelectedValue);
-            int? iCodigoCidade = Utils.ParseNullableInt(cboCidade.SelectedValue);
-            int? iCodigoEstado = Utils.ParseNullableInt(cboEstado.SelectedValue);
-            string? sTelefone = Utils.ParseNullableString(txtTelefone.Text.Trim());
-            string? sEmail = Utils.ParseNullableString(txtEmail.Text.Trim());
-            string? sTipo = Utils.ParseNullableString(cboTipo.SelectedValue?.ToString());
-            string? sNomeFantasia = Utils.ParseNullableString(txtNomeFantasia.Text.Trim());
-            string? sRazaoSocial = Utils.ParseNullableString(txtRazaoSocial.Text.Trim());
 
-            CarregarParceiros(iCodigoEmpresa,
-                              sDocumento,
-                              iCodigoPais,
-                              iCodigoCidade,
-                              iCodigoEstado,
-                              sTelefone,
-                              sEmail,
-                              sTipo,
-                              sNomeFantasia,
-                              sRazaoSocial);
+            filtrar();
+
         }
 
         private void CarregarParceiros(int codigoEmpresa,
@@ -381,8 +388,22 @@ namespace monolith.parceiroNegocio
             {
                 codigoParceiroAtual = button.Tag as int?;
 
-                CarregarDadosParceiro(codigoParceiroAtual, Globals.GlobalCodigoEmpresa);
+                CarregarDadosParceiro(codigoParceiroAtual, 
+                                      Globals.GlobalCodigoEmpresa);
             }
+        }
+
+        private void BtnExcluir_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null && button.Tag != null)
+            {
+               int? codigoParceiroAtual = button.Tag as int?;
+
+                FuncsParceiroNegocio.excluirParceiroNegocio(codigoParceiroAtual);
+            }
+
+            filtrar();
         }
 
         private void btnSalvar_Click(object sender, RoutedEventArgs e)
@@ -453,6 +474,7 @@ namespace monolith.parceiroNegocio
             }
 
                 NovoParceiro();
+                filtrar();
 
             }
             catch (Exception ex)

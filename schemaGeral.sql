@@ -718,6 +718,25 @@ $$;
 ALTER PROCEDURE public.sp_delete_cadastro_basico_ativo(IN p_codigo_foto integer, IN p_codigo_empresa integer) OWNER TO postgres;
 
 --
+-- Name: sp_delete_cadastro_parceiro_negocio(integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.sp_delete_cadastro_parceiro_negocio(IN p_codigo_empresa integer, IN p_codigo_parceiro integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- Deleta a foto da tabela
+    DELETE FROM tb_cad_parceiro_negocio
+    WHERE codigo = p_codigo_parceiro
+    AND codigo_empresa = p_codigo_empresa;
+    
+END;
+$$;
+
+
+ALTER PROCEDURE public.sp_delete_cadastro_parceiro_negocio(IN p_codigo_empresa integer, IN p_codigo_parceiro integer) OWNER TO postgres;
+
+--
 -- Name: sp_insert_cadastro_basico_ativo(integer, character varying, integer, character varying, smallint, integer, character varying, boolean, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
