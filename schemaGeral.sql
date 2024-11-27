@@ -36,7 +36,7 @@ ALTER FUNCTION public.fn_buscar_prioridade() OWNER TO postgres;
 -- Name: fn_cad_parceiro_negocio_dados(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.fn_cad_parceiro_negocio_dados(p_codigo integer, p_codigo_empresa integer) RETURNS TABLE(codigo integer, is_cnpj boolean, documento character varying, cep character varying, telefone character varying, email character varying, data_cadastro timestamp without time zone, tipo_parceiro character, codigo_empresa integer, nome_fantasia character varying, razao_social character varying, logradouro character varying, numero character varying, complemento character varying, bairro character varying, contato character varying, codigo_pais bigint, codigo_cidade bigint, codigo_estado integer, nome_pais character varying, nome_cidade character varying, uf_estado character varying)
+CREATE FUNCTION public.fn_cad_parceiro_negocio_dados(p_codigo integer, p_codigo_empresa integer) RETURNS TABLE(codigo integer, is_cnpj boolean, documento character varying, telefone character varying, email character varying, data_cadastro timestamp without time zone, tipo_parceiro character, codigo_empresa integer, nome_fantasia character varying, razao_social character varying, contato character varying, codigo_pais bigint, codigo_cidade bigint, codigo_estado integer, nome_pais character varying, nome_cidade character varying, uf_estado character varying, bairro character varying, logradouro character varying, numero character varying, cep character varying, complemento character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -45,25 +45,25 @@ BEGIN
         tb_cad_parceiro_negocio.codigo,
         tb_cad_parceiro_negocio.is_cnpj,
         tb_cad_parceiro_negocio.documento,
-        tb_cad_parceiro_negocio.cep,
-        tb_cad_parceiro_negocio.telefone,
-        tb_cad_parceiro_negocio.email,
+        COALESCE(tb_cad_parceiro_negocio.telefone, ''),
+        COALESCE(tb_cad_parceiro_negocio.email, ''),
         tb_cad_parceiro_negocio.data_cadastro,
         tb_cad_parceiro_negocio.tipo_parceiro,
         tb_cad_parceiro_negocio.codigo_empresa,
-        tb_cad_parceiro_negocio.nome_fantasia,
-        tb_cad_parceiro_negocio.razao_social,
-        tb_cad_parceiro_negocio.logradouro,
-        tb_cad_parceiro_negocio.numero,
-        tb_cad_parceiro_negocio.complemento,
-        tb_cad_parceiro_negocio.bairro,
-        tb_cad_parceiro_negocio.contato,
-        tb_cad_parceiro_negocio.codigo_pais,
-        tb_cad_parceiro_negocio.codigo_cidade,
-        tb_cad_parceiro_negocio.codigo_estado,
-        pais.nome_pt AS nome_pais,
-        municipio.nome AS nome_cidade,
-        tb_stc_estados.uf AS uf_estado
+        COALESCE(tb_cad_parceiro_negocio.nome_fantasia, ''),
+        COALESCE(tb_cad_parceiro_negocio.razao_social, ''),
+        COALESCE(tb_cad_parceiro_negocio.contato, ''),
+        COALESCE(tb_cad_parceiro_negocio.codigo_pais, 0),
+        COALESCE(tb_cad_parceiro_negocio.codigo_cidade, 0),
+        COALESCE(tb_cad_parceiro_negocio.codigo_estado, 0),
+        COALESCE(pais.nome_pt, ''),
+        COALESCE(municipio.nome, ''),
+        COALESCE(tb_stc_estados.uf, ''),
+		COALESCE(tb_cad_parceiro_negocio.bairro , ''),
+		COALESCE(tb_cad_parceiro_negocio.logradouro, ''),
+		COALESCE(tb_cad_parceiro_negocio.numero,''),
+		COALESCE(tb_cad_parceiro_negocio.cep, ''),
+		COALESCE(tb_cad_parceiro_negocio.complemento, '')
     FROM tb_cad_parceiro_negocio
     LEFT JOIN pais 
         ON pais.id = tb_cad_parceiro_negocio.codigo_pais
@@ -113,21 +113,21 @@ BEGIN
     RETURN QUERY
     SELECT 
 		tb_cad_parceiro_negocio.codigo,
-        tb_cad_parceiro_negocio.documento,
-        tb_cad_parceiro_negocio.codigo_estado,
-        tb_cad_parceiro_negocio.telefone,
-        tb_cad_parceiro_negocio.email,
+        COALESCE(tb_cad_parceiro_negocio.documento, ''),
+        COALESCE(tb_cad_parceiro_negocio.codigo_estado, 0),
+        COALESCE(tb_cad_parceiro_negocio.telefone, ''),
+        COALESCE(tb_cad_parceiro_negocio.email, ''),
         tb_cad_parceiro_negocio.data_cadastro,
-        tb_cad_parceiro_negocio.tipo_parceiro,
+        COALESCE(tb_cad_parceiro_negocio.tipo_parceiro, ''),
         tb_cad_parceiro_negocio.codigo_empresa,
-        tb_cad_parceiro_negocio.nome_fantasia,
-        tb_cad_parceiro_negocio.razao_social,
-        municipio.nome, 
-        pais.nome_pt, 
-        tb_stc_estados.nome,
-        municipio.id, 
-        pais.id, 
-        tb_stc_estados.id,
+        COALESCE(tb_cad_parceiro_negocio.nome_fantasia, ''),
+        COALESCE(tb_cad_parceiro_negocio.razao_social, ''),
+        COALESCE(municipio.nome,  ''),
+        COALESCE(pais.nome_pt,  ''),
+        COALESCE(tb_stc_estados.nome, ''),
+        COALESCE(municipio.id,  0),
+        COALESCE(pais.id,  0),
+        COALESCE(tb_stc_estados.id, 0),
         COALESCE(tb_cad_parceiro_negocio.logradouro, '') || ', ' ||
         COALESCE(tb_cad_parceiro_negocio.numero, '') || ', ' ||
         COALESCE(tb_cad_parceiro_negocio.bairro, '') AS endereco

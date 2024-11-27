@@ -194,7 +194,7 @@ namespace monolith.parceiroNegocio
                     conn.Open();
                     using (var cmd = new NpgsqlCommand("SELECT id, nome FROM municipio WHERE uf = @p_uf", conn))
                     {
-                        cmd.Parameters.AddWithValue("@p_uf", ufEstado);
+                        cmd.Parameters.AddWithValue("@p_uf", (object)ufEstado ?? DBNull.Value);
 
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -472,7 +472,9 @@ namespace monolith.parceiroNegocio
                 try
                 {
                     conn.Open();
-                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, @p_codigo_empresa)", conn))
+                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, "        +
+                                                                                                    "@p_codigo_empresa" +
+                                                                                                    ")", conn))
                     {
                         cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
                         cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa);
@@ -487,6 +489,11 @@ namespace monolith.parceiroNegocio
                                 txtEmailDados.Text = reader["email"]?.ToString();
                                 txtContatoDados.Text = reader["contato"]?.ToString();
                                 txtTelefoneDados.Text = reader["telefone"]?.ToString();
+                                txtBairroDados.Text = reader["bairro"]?.ToString();
+                                txtLogradouroDados.Text = reader["logradouro"]?.ToString();
+                                txtNumeroDados.Text = reader["numero"]?.ToString();
+                                txtCEPDados.Text = reader["cep"]?.ToString();
+                                txtComplementoDados.Text = reader["complemento"]?.ToString();
 
                                 cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
                                 {
