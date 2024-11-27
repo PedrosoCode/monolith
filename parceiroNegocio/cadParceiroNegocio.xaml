@@ -181,8 +181,31 @@
                             </StackPanel>
                         </StackPanel>
 
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
+                            <StackPanel>
+                                <Label Content="Bairro"/>
+                                <TextBox Name="txtBairroDados" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Logradouro"/>
+                                <TextBox Name="txtLogradouroDados" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Numero"/>
+                                <TextBox Name="txtNumeroDados" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="CEP"/>
+                                <TextBox Name="txtCEPDados" Width="100" Margin="5"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Label Content="Complemento"/>
+                                <TextBox Name="txtComplementoDados" Width="100" Margin="5"/>
+                            </StackPanel>
+                        </StackPanel>
+
                         <!-- Segunda linha de campos de texto -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,10">
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,10">
                             <StackPanel>
                                 <Label Content="País" Margin="1"/>
                                 <ComboBox x:Name="cboPaisDados"
@@ -239,7 +262,7 @@
             <Border Background="GhostWhite" BorderThickness="1" BorderBrush="DarkSlateGray" Width="360" Height="35" CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button Content="Excluir" Width="70" Height="20" Margin="5"  Background="IndianRed" FontStyle="Italic"/>
-                    <Button Content="Novo" Width="70" Height="20" Margin="5" />
+                    <Button Content="Novo" Width="70" Height="20" Margin="5" Click="BtnNovo_Click" />
                     <Button Width="70" Height="20" Margin="5"
                             Click="btnSalvar_Click"
                             >

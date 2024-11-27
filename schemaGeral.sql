@@ -553,13 +553,14 @@ $$;
 ALTER FUNCTION public.fn_select_paises() OWNER TO postgres;
 
 --
--- Name: sp_atualizar_parceiro_negocio(integer, integer, character varying, character varying, character varying, character varying, character varying, character varying, character, bigint, integer, bigint); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: sp_atualizar_parceiro_negocio(integer, integer, character varying, character varying, character varying, character varying, character varying, character varying, character, bigint, integer, bigint, boolean, character varying, character varying, character varying, character varying, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint)
+CREATE PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint, IN p_tipo_documento boolean, IN p_cep character varying, IN p_logradouro character varying, IN p_numero character varying, IN p_complemento character varying, IN p_bairro character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
+
     UPDATE public.tb_cad_parceiro_negocio
     SET 
 		documento = p_documento,
@@ -571,7 +572,13 @@ BEGIN
 		tipo_parceiro = p_tipo,
 		codigo_pais = p_codigo_pais,
 		codigo_estado = p_codigo_estado,
-		codigo_cidade = p_codigo_cidade
+		codigo_cidade = p_codigo_cidade,
+		is_cnpj = p_tipo_documento,
+		cep = p_cep,
+		logradouro = p_logradouro,
+		numero  = p_numero, 
+		complemento  = p_complemento,
+		bairro = p_bairro
 		
     WHERE 
         codigo = p_codigo 
@@ -580,7 +587,7 @@ END;
 $$;
 
 
-ALTER PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint) OWNER TO postgres;
+ALTER PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint, IN p_tipo_documento boolean, IN p_cep character varying, IN p_logradouro character varying, IN p_numero character varying, IN p_complemento character varying, IN p_bairro character varying) OWNER TO postgres;
 
 --
 -- Name: sp_cadastro_basico_ambiente(character varying); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -817,30 +824,67 @@ $$;
 ALTER PROCEDURE public.sp_insert_cadastro_basico_item_estoque(IN p_nome_item character varying, IN p_preco_base_venda numeric, IN p_custo numeric, IN p_codigo_empresa integer) OWNER TO postgres;
 
 --
--- Name: sp_insert_cadastro_basico_parceiro_negocio(character varying, boolean, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: sp_insert_cadastro_basico_parceiro_negocio(integer, character varying, character varying, character varying, character varying, timestamp without time zone, character, character varying, character varying, character varying, character varying, character varying, character varying, character varying, bigint, bigint, integer, boolean); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_insert_cadastro_basico_parceiro_negocio(IN nome_razao_social character varying, IN is_cnpj boolean, IN documento character varying, IN endereco character varying, IN cidade character varying, IN estado character varying, IN cep character varying, IN telefone character varying, IN email character varying, IN tipo_parceiro character varying, IN p_codigo_empresa integer)
+CREATE PROCEDURE public.sp_insert_cadastro_basico_parceiro_negocio(IN p_codigo_empresa integer, IN p_documento character varying, IN p_cep character varying, IN p_telefone character varying, IN p_email character varying, IN p_data_cadastro timestamp without time zone, IN p_tipo character, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_logradouro character varying, IN p_numero character varying, IN p_complemento character varying, IN p_bairro character varying, IN p_contato character varying, IN p_codigo_pais bigint, IN p_codigo_cidade bigint, IN p_codigo_estado integer, IN p_tipo_documento boolean)
     LANGUAGE plpgsql
     AS $$
 DECLARE
     max_codigo INTEGER;
-BEGIN-- Determina o próximo código com base no máximo código existente para o codigo_empresa específico
+BEGIN
+
 	SELECT COALESCE(MAX(codigo), 0) +1 INTO max_codigo 
     FROM tb_cad_parceiro_negocio 
     WHERE codigo_empresa = p_codigo_empresa;
 
-    -- Insere o novo parceiro de negócio com o código gerado e o código da empresa fornecido
+
 	INSERT INTO tb_cad_parceiro_negocio (
-        codigo, nome_razao_social, is_cnpj, documento, endereco, cidade, estado, cep, telefone, email, tipo_parceiro, codigo_empresa
+    codigo,
+	codigo_empresa,
+	documento,
+	cep,
+	telefone,
+	email,
+	data_cadastro,
+	tipo_parceiro,
+	nome_fantasia,
+	razao_social,
+	logradouro,
+	numero,
+	complemento,
+	bairro,
+	contato,
+	codigo_pais,
+	codigo_cidade,
+	codigo_estado,
+	is_cnpj
     ) VALUES (
-        max_codigo, nome_razao_social, is_cnpj, documento, endereco, cidade, estado, cep, telefone, email, tipo_parceiro, p_codigo_empresa
+	max_codigo,
+	p_codigo_empresa,
+	p_documento,
+	p_cep,
+	p_telefone,
+	p_email,
+	p_data_cadastro,
+	p_tipo,
+	p_nome_fantasia,
+	p_razao_social,
+	p_logradouro,
+	p_numero,
+	p_complemento,
+	p_bairro,
+	p_contato,
+	p_codigo_pais,
+	p_codigo_cidade,
+	p_codigo_estado,
+	p_tipo_documento
     );
 END;
 $$;
 
 
-ALTER PROCEDURE public.sp_insert_cadastro_basico_parceiro_negocio(IN nome_razao_social character varying, IN is_cnpj boolean, IN documento character varying, IN endereco character varying, IN cidade character varying, IN estado character varying, IN cep character varying, IN telefone character varying, IN email character varying, IN tipo_parceiro character varying, IN p_codigo_empresa integer) OWNER TO postgres;
+ALTER PROCEDURE public.sp_insert_cadastro_basico_parceiro_negocio(IN p_codigo_empresa integer, IN p_documento character varying, IN p_cep character varying, IN p_telefone character varying, IN p_email character varying, IN p_data_cadastro timestamp without time zone, IN p_tipo character, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_logradouro character varying, IN p_numero character varying, IN p_complemento character varying, IN p_bairro character varying, IN p_contato character varying, IN p_codigo_pais bigint, IN p_codigo_cidade bigint, IN p_codigo_estado integer, IN p_tipo_documento boolean) OWNER TO postgres;
 
 --
 -- Name: sp_manutencao_necessidade_insert_ativo_imagem(bigint, bigint, integer, character varying, character varying); Type: PROCEDURE; Schema: public; Owner: postgres

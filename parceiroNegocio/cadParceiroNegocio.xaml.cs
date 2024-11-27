@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,7 +31,6 @@ namespace monolith.parceiroNegocio
         public cadParceiroNegocio()
         {
 
-
             InitializeComponent();
             MainTabControl.SelectedItem = TabListagem;
 
@@ -39,6 +40,54 @@ namespace monolith.parceiroNegocio
             PopularComboTipo();
         }
 
+        private void NovoParceiro()
+        {
+
+            codigoParceiroAtual             = null;
+            txtDocumentoDados.Text          = "";
+            txtNomeFantasiaDados.Text       = "";
+            txtRazaoSocialDados.Text        = "";
+            txtEmailDados.Text              = "";
+            txtContatoDados.Text            = "";
+            txtTelefoneDados.Text           = "";
+            cboTipoDados.SelectedValue      = 0;
+            cboPaisDados.SelectedValue      = 0;
+            cboEstadoDados.SelectedValue    = 0;
+            cboCidadeDados.SelectedValue    = 0;
+            txtCEPDados.Text                = "";
+            txtLogradouroDados.Text         = "";
+            txtNumeroDados.Text             = "";
+            txtComplementoDados.Text        = "";
+            txtBairroDados.Text             = "";
+
+            cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("A", "Ambos"),
+                new KeyValuePair<string, string>("C", "Cliente"),
+                new KeyValuePair<string, string>("F", "Fornecedor")
+            };
+            cboTipoDados.DisplayMemberPath = "Value";
+            cboTipoDados.SelectedValuePath = "Key";
+
+            var paises = CarregarPaises();
+            cboPaisDados.ItemsSource = paises;
+            cboPaisDados.DisplayMemberPath = "Value";
+            cboPaisDados.SelectedValuePath = "Key";
+
+            var estados = CarregarEstados();
+            cboEstadoDados.ItemsSource = estados;
+            cboEstadoDados.DisplayMemberPath = "Value";
+            cboEstadoDados.SelectedValuePath = "Key";
+
+            MainTabControl.SelectedItem = TabDados;
+        }
+
+        private void BtnNovo_Click(object sender, RoutedEventArgs e)
+        {
+
+            NovoParceiro();
+
+        }
         private void PopularComboTipo()
         {
             var opcoes = new List<KeyValuePair<string, string>>()
@@ -339,40 +388,78 @@ namespace monolith.parceiroNegocio
         private void btnSalvar_Click(object sender, RoutedEventArgs e)
         {
 
+            try
+            {
 
-            String sDocumento = txtDocumentoDados.Text.Trim();
-            String sNomeFantasia = txtNomeFantasiaDados.Text.Trim();
-            String sRazaoSocial = txtRazaoSocialDados.Text.Trim();
-            String sEmail = txtEmailDados.Text.Trim();
-            String sContato = txtContatoDados.Text.Trim();
-            String sTelefone = txtTelefoneDados.Text.Trim();
-            String? sTipo = cboTipoDados.SelectedValue as String;
-            int? iCodigoPais = cboPaisDados.SelectedValue as int?;
-            int? iCodigoEstado = cboEstadoDados.SelectedValue as int?;
-            int? iCodigocidade = cboCidadeDados.SelectedValue as int?;
+            
+
+            String sDocumento       = txtDocumentoDados.Text.Trim();
+            String sNomeFantasia    = txtNomeFantasiaDados.Text.Trim();
+            String sRazaoSocial     = txtRazaoSocialDados.Text.Trim();
+            String sEmail           = txtEmailDados.Text.Trim();
+            String sContato         = txtContatoDados.Text.Trim();
+            String sTelefone        = txtTelefoneDados.Text.Trim();
+            String? sTipo           = cboTipoDados.SelectedValue as String;
+            int? lCodigoPais        = cboPaisDados.SelectedValue as int?;
+            int? iCodigoEstado      = cboEstadoDados.SelectedValue as int?;
+            int? lCodigoCidade      = cboCidadeDados.SelectedValue as int?;
+            String sCep             = txtCEPDados.Text.Trim();
+            String sLogradouro      = txtLogradouroDados.Text.Trim();
+            String sNumero          = txtNumeroDados.Text.Trim();
+            String sComplemento     = txtComplementoDados.Text.Trim();
+            String sBairro          = txtBairroDados.Text.Trim();  
 
 
             if (codigoParceiroAtual == null)
             {
-                
+
+
+                FuncsParceiroNegocio.insertParceiroNegocio(sDocumento   ,
+                                                           sCep         ,
+                                                           sTelefone    ,
+                                                           sEmail       ,
+                                                           sTipo        ,
+                                                           sNomeFantasia,
+                                                           sRazaoSocial ,
+                                                           sLogradouro  ,
+                                                           sNumero      ,
+                                                           sComplemento ,
+                                                           sBairro      ,
+                                                           sContato     ,
+                                                           lCodigoPais  ,
+                                                           lCodigoCidade,
+                                                           iCodigoEstado
+                                                           );
             }
             else
             {
-                FuncsParceiroNegocio.updateParceiroNegocio( codigoParceiroAtual,
-                                                             sDocumento,
-                                                             sNomeFantasia,
-                                                             sRazaoSocial,
-                                                             sEmail,
-                                                             sContato,
-                                                             sTelefone,
-                                                             sTipo,
-                                                             iCodigoPais,
-                                                             iCodigoEstado,
-                                                             iCodigocidade
+                FuncsParceiroNegocio.updateParceiroNegocio( codigoParceiroAtual ,
+                                                             sDocumento         ,
+                                                             sNomeFantasia      ,
+                                                             sRazaoSocial       ,
+                                                             sEmail             ,
+                                                             sContato           ,
+                                                             sTelefone          ,
+                                                             sTipo              ,
+                                                             lCodigoPais        ,
+                                                             iCodigoEstado      ,
+                                                             lCodigoCidade      ,
+                                                             sCep               ,
+                                                             sLogradouro        ,
+                                                             sNumero            ,
+                                                             sComplemento       ,
+                                                             sBairro
                                                             );
             }
 
-           
+                NovoParceiro();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar os detalhes do parceiro: {ex.Message}");
+            }
+
         }
 
         private void CarregarDadosParceiro(int? codigoParceiroAtual, 
