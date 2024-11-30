@@ -30,15 +30,15 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Nome Fantasia"/>
-                                <TextBox Name="txtNomeFantasia" Width="100" Margin="5"/>
+                                <TextBox Name="txtNomeFantasia" Width="160" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Razão Social"/>
-                                <TextBox Name="txtRazaoSocial" Width="100" Margin="5"/>
+                                <TextBox Name="txtRazaoSocial" Width="160" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="E-Mail"/>
-                                <TextBox Name="txtEmail" Width="100" Margin="5"/>
+                                <TextBox Name="txtEmail" Width="150" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Contato"/>
@@ -87,7 +87,7 @@
                                           IsEditable="True"
                                           IsTextSearchEnabled="True"
                                           SelectedValuePath="Codigo"
-                                          Width="100"
+                                          Width="150"
                                           Margin="6"/>
                             </StackPanel>
                         </StackPanel>
@@ -159,15 +159,15 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Nome Fantasia"/>
-                                <TextBox Name="txtNomeFantasiaDados" Width="100" Margin="5"/>
+                                <TextBox Name="txtNomeFantasiaDados" Width="160" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Razão Social"/>
-                                <TextBox Name="txtRazaoSocialDados" Width="100" Margin="5"/>
+                                <TextBox Name="txtRazaoSocialDados" Width="160" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="E-Mail"/>
-                                <TextBox Name="txtEmailDados" Width="100" Margin="5"/>
+                                <TextBox Name="txtEmailDados" Width="150" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Contato"/>
@@ -195,11 +195,11 @@
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Logradouro"/>
-                                <TextBox Name="txtLogradouroDados" Width="100" Margin="5"/>
+                                <TextBox Name="txtLogradouroDados" Width="160" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="Numero"/>
-                                <TextBox Name="txtNumeroDados" Width="100" Margin="5"/>
+                                <TextBox Name="txtNumeroDados" Width="60" Margin="5"/>
                             </StackPanel>
                             <StackPanel>
                                 <Label Content="CEP"/>
@@ -239,7 +239,7 @@
                                           IsEditable="True"
                                           IsTextSearchEnabled="True"
                                           SelectedValuePath="Codigo"
-                                          Width="100"
+                                          Width="160"
                                           Margin="6"/>
                             </StackPanel>
                         </StackPanel>
