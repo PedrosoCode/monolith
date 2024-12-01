@@ -103,6 +103,36 @@ $$;
 ALTER FUNCTION public.fn_cadastro_listar_tecnico(p_codigo_empresa integer) OWNER TO postgres;
 
 --
+-- Name: fn_gen_combo_fabricante_nome_fantasia(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_gen_combo_fabricante_nome_fantasia(p_codigo_empresa integer) RETURNS TABLE(codigo bigint, nome_fantasia character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT tb_cad_fabricante.codigo, tb_cad_fabricante.nome_fantasia FROM tb_cad_fabricante where codigo_empresa = p_codigo_empresa;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_gen_combo_fabricante_nome_fantasia(p_codigo_empresa integer) OWNER TO postgres;
+
+--
+-- Name: fn_gen_combo_parceiros_negocio_razao_social(integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_gen_combo_parceiros_negocio_razao_social(p_codigo_empresa integer) RETURNS TABLE(codigo integer, razao_social character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT tb_cad_parceiro_negocio.codigo, tb_cad_parceiro_negocio.razao_social FROM tb_cad_parceiro_negocio where codigo_empresa = p_codigo_empresa;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_gen_combo_parceiros_negocio_razao_social(p_codigo_empresa integer) OWNER TO postgres;
+
+--
 -- Name: fn_gen_filtro_parceiro_negocio(integer, character varying, bigint, bigint, integer, character varying, character varying, character, character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
 --
 

@@ -18,32 +18,30 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <StackPanel>
-                                <Label Content="Código"/>
-                                <TextBox Name="txtCodigo" Width="100" Margin="5"/>
+                        <GroupBox Header="Filtros" Margin="5,5,5,5" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                                <StackPanel Margin="5">
+                                    <Label Content="Parceiro de negócio"/>
+                                    <ComboBox x:Name="cboParceiroListagem" IsEditable="True" IsTextSearchEnabled="True" DisplayMemberPath="Value" SelectedValuePath="Key" Width="100"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label Content="Número de Série"/>
+                                    <TextBox Name="txtNumeroSerie" Width="150" Margin="5"/>
+                                </StackPanel>
+                                <StackPanel Margin="5">
+                                    <Label Content="Fabricante"/>
+                                    <ComboBox x:Name="cboFabricanteListagem" IsEditable="True" IsTextSearchEnabled="True" DisplayMemberPath="Value" SelectedValuePath="Key" Width="100"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label Content="Modelo"/>
+                                    <TextBox Name="txtModelo" Width="150" Margin="5"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <Label Content="Observação"/>
+                                    <TextBox Name="txtObservacao" Width="150" Margin="5"/>
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel>
-                                <Label Content="Código Cliente"/>
-                                <TextBox Name="txtCodigoCliente" Width="150" Margin="5"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="Número de Série"/>
-                                <TextBox Name="txtNumeroSerie" Width="150" Margin="5"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="Código Fabricante"/>
-                                <TextBox Name="txtCodigoFabricante" Width="150" Margin="5"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="Modelo"/>
-                                <TextBox Name="txtModelo" Width="150" Margin="5"/>
-                            </StackPanel>
-                            <StackPanel>
-                                <Label Content="Observação"/>
-                                <TextBox Name="txtObservacao" Width="150" Margin="5"/>
-                            </StackPanel>
-                        </StackPanel>
+                        </GroupBox>
 
                         <DataGrid Name="dgAtivos" AutoGenerateColumns="False" Grid.Row="1" Margin="5"
                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -51,14 +49,14 @@
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Código" Binding="{Binding ID}" Width="100"/>
-                                <DataGridTextColumn Header="Código Cliente" Binding="{Binding CodigoCliente}" Width="150"/>
-                                <DataGridTextColumn Header="Número de Série" Binding="{Binding NumeroSerie}" Width="150"/>
-                                <DataGridTextColumn Header="Código Fabricante" Binding="{Binding CodigoFabricante}" Width="150"/>
-                                <DataGridTextColumn Header="Modelo" Binding="{Binding Modelo}" Width="150"/>
-                                <DataGridTextColumn Header="Observação" Binding="{Binding Observacao}" Width="150"/>
-                                <DataGridTextColumn Header="Data de Entrada" Binding="{Binding DataInput, StringFormat=\{0:dd/MM/yyyy\}}" Width="150"/>
-                                <DataGridTextColumn Header="Código Empresa" Binding="{Binding CodigoEmpresa}" Width="100"/>
+                                <DataGridTextColumn Header="Código" Binding="{Binding codigo_ativo}" Width="100"/>
+                                <DataGridTextColumn Header="Código Cliente" Binding="{Binding codigo_cliente_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Número de Série" Binding="{Binding numero_serie_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Código Fabricante" Binding="{Binding codigo_fabricante_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Modelo" Binding="{Binding modelo_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Observação" Binding="{Binding observacao_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Data de Entrada" Binding="{Binding data_input_ativo, StringFormat=\{0:dd/MM/yyyy\}}" Width="150"/>
+                                <DataGridTextColumn Header="Código Empresa" Binding="{Binding codigo_empresa_ativo}" Width="100"/>
                                 <DataGridTemplateColumn Header="Ações" Width="100">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

@@ -325,16 +325,17 @@ namespace monolith.parceiroNegocio
                 {
                     conn.Open();
                     using (var cmd = new NpgsqlCommand("SELECT * FROM public.fn_gen_filtro_parceiro_negocio(" +
-                                                        "@p_codigo_empresa, " +
-                                                        "@p_documento, " +
-                                                        "@p_codigo_pais, " +
-                                                        "@p_codigo_cidade, " +
-                                                        "@p_codigo_estado, " +
-                                                        "@p_telefone, " +
-                                                        "@p_email, " +
-                                                        "@p_tipo, " +
-                                                        "@p_nome_fantasia, " +
-                                                        "@p_razao_social)", conn))
+                                                        "@p_codigo_empresa, "   +
+                                                        "@p_documento, "        +
+                                                        "@p_codigo_pais, "      +
+                                                        "@p_codigo_cidade, "    +
+                                                        "@p_codigo_estado, "    +
+                                                        "@p_telefone, "         +
+                                                        "@p_email, "            +
+                                                        "@p_tipo, "             +
+                                                        "@p_nome_fantasia, "    +
+                                                        "@p_razao_social"       +
+                                                        ")", conn))
                     {
                         cmd.Parameters.AddWithValue("p_codigo_empresa", codigoEmpresa);
                         cmd.Parameters.AddWithValue("p_documento", (object)sDocumento ?? DBNull.Value);
