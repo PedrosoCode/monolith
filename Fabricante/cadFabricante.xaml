@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="monolith.Fabricante.cadFabricante"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:monolith.Fabricante"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="LightGray">
+        <TabControl x:Name="MainTabControl" Margin="10">
+            <TabItem Header="Listagem de Fabricantes" x:Name="TabListagem">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <GroupBox   Grid.Row="0" Margin="5,5,5,5" Grid.ColumnSpan="2" HorizontalAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Margin="5">
+                                    <Label Content="Nome fantasia"/>
+                                    <TextBox Name="txtNomeFantasia" Width="150"/>
+                                </StackPanel>
+                                <StackPanel Margin="5">
+                                    <Label Content="Razao Social"/>
+                                    <TextBox Name="txtRazaoSocial" Width="150"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+
+    </Grid>
+</UserControl>

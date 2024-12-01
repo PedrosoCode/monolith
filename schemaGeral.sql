@@ -1635,7 +1635,9 @@ CREATE TABLE public.tb_cad_ativo (
     observacao character varying,
     data_input date DEFAULT CURRENT_DATE,
     codigo_empresa integer NOT NULL,
-    descricao text
+    descricao text,
+    alias character varying(255),
+    data_ultima_alteracao date
 );
 
 
