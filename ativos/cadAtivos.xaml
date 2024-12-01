@@ -74,12 +74,85 @@
 
         <!-- Aba de Detalhes do Ativo -->
         <TabItem Header="Dados do Ativo" x:Name="TabDetalhes" Visibility="Collapsed">
-            <Grid Margin="10">
-                <Label Content="Detalhes do Ativo" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
-                <!-- Adicione campos e controles para exibir e editar detalhes do ativo -->
-                <Button Content="Voltar" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Click="BtnVoltar_Click"/>
-                <!-- Adicione outros elementos conforme necessário -->
-            </Grid>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <!-- Coluna principal -->
+                        <ColumnDefinition Width="1*"/>
+                        <!-- Coluna secundária -->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Linha para GroupBox maior -->
+                        <RowDefinition Height="*"/>
+                        <!-- Linha para GroupBox menor -->
+                    </Grid.RowDefinitions>
+
+                    <!-- GroupBox Maior -->
+                    <GroupBox Header="Informações do Ativo" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="5">
+                                <Label Content="Documento"/>
+                                <TextBox Name="txtDocumento" Width="100"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="Nome Fantasia"/>
+                                <TextBox Name="txtNomeFantasia" Width="160"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="Razão Social"/>
+                                <TextBox Name="txtRazaoSocial" Width="160"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="E-Mail"/>
+                                <TextBox Name="txtEmail" Width="150"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="Contato"/>
+                                <TextBox Name="txtContato" Width="100"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="Telefone"/>
+                                <TextBox Name="txtTelefone" Width="100"/>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <Label Content="Tipo"/>
+                                <ComboBox x:Name="cboTipo" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Codigo" Width="100"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- GroupBox Menor 1 -->
+                    <GroupBox Header="Localização" Grid.Row="1" Grid.Column="0" Margin="5">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <StackPanel Margin="5">
+                                    <Label Content="País"/>
+                                    <ComboBox x:Name="cboPais" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Codigo" Width="100"/>
+                                </StackPanel>
+                                <!--<StackPanel Margin="5">
+                            <Label Content="Estado"/>
+                            <ComboBox x:Name="cboEstado" IsEditable="True" IsTextSearchEnabled="True" DisplayMemberPath="Value" SelectedValuePath="Key" Width="100" SelectionChanged="cboEstado_SelectionChanged"/>
+                        </StackPanel>-->
+                                <StackPanel Margin="5">
+                                    <Label Content="Cidade"/>
+                                    <ComboBox x:Name="cboCidade" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Codigo" Width="150"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- GroupBox Menor 2 -->
+                    <GroupBox Header="Outras Informações" Grid.Row="1" Grid.Column="1" Margin="5">
+                        <StackPanel>
+                            <!-- Adicione outros campos conforme necessário -->
+                            <Label Content="Informações adicionais podem ser adicionadas aqui"/>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+            </ScrollViewer>
         </TabItem>
+
     </TabControl>
 </UserControl>
