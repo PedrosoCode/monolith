@@ -49,18 +49,21 @@
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Código" Binding="{Binding codigo_ativo}" Width="100"/>
-                                <DataGridTextColumn Header="Código Cliente" Binding="{Binding codigo_cliente_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Parceiro de negócio" Binding="{Binding nome_fantasia_parceiro}" Width="150"/>
+                                <DataGridTextColumn Header="Fabricante" Binding="{Binding nome_fantasia_fabricante}" Width="150"/>
+                                <DataGridTextColumn Header="Contato" Binding="{Binding contato_parceiro}" Width="150"/>
+                                <DataGridTextColumn Header="Modelo" Binding="{Binding modelo_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Código" Binding="{Binding codigo_ativo}" Width="100" Visibility="Hidden"/>
+                                <DataGridTextColumn Header="Código Cliente" Binding="{Binding codigo_cliente_ativo}" Width="150" Visibility="Hidden"/>
                                 <DataGridTextColumn Header="Número de Série" Binding="{Binding numero_serie_ativo}" Width="150"/>
-                                <DataGridTextColumn Header="Código Fabricante" Binding="{Binding codigo_fabricante_ativo}" Width="150"/>
+                                <DataGridTextColumn Header="Código Fabricante" Binding="{Binding codigo_fabricante_ativo}" Width="150" Visibility="Hidden"/>
                                 <DataGridTextColumn Header="Modelo" Binding="{Binding modelo_ativo}" Width="150"/>
                                 <DataGridTextColumn Header="Observação" Binding="{Binding observacao_ativo}" Width="150"/>
                                 <DataGridTextColumn Header="Data de Entrada" Binding="{Binding data_input_ativo, StringFormat=\{0:dd/MM/yyyy\}}" Width="150"/>
-                                <DataGridTextColumn Header="Código Empresa" Binding="{Binding codigo_empresa_ativo}" Width="100"/>
                                 <DataGridTemplateColumn Header="Ações" Width="100">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="Editar" Click="BtnEditar_Click" Tag="{Binding ID}"/>
+                                            <Button Content="Editar" Click="BtnEditar_Click" Tag="{Binding codigo_ativo}"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

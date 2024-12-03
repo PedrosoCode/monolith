@@ -69,12 +69,12 @@ namespace monolith.ativos
             var button = sender as Button;
             if (button != null && button.Tag != null)
             {
-                int idAtivo = (int)button.Tag;
-                MostrarDetalhesAtivo(idAtivo);
+                codigoAtivoAtual = (int)button.Tag;
+                MostrarDetalhesAtivo(codigoAtivoAtual);
             }
         }
 
-        private void MostrarDetalhesAtivo(int idAtivo)
+        private void MostrarDetalhesAtivo(int? idAtivo)
         {
             // Exibe a aba de detalhes e carrega os dados do ativo
             TabListagem.Visibility = Visibility.Collapsed;

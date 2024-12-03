@@ -506,7 +506,7 @@ ALTER FUNCTION public.fn_ordem_servico_load_item(p_codigo_empresa bigint, p_codi
 -- Name: fn_select_cad_ativo_dados(integer, integer, integer, character varying, integer, character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.fn_select_cad_ativo_dados(p_codigo_empresa integer, p_codigo integer DEFAULT NULL::integer, p_codigo_cliente integer DEFAULT NULL::integer, p_numero_serie character varying DEFAULT NULL::character varying, p_codigo_fabricante integer DEFAULT NULL::integer, p_modelo character varying DEFAULT NULL::character varying, p_observacao character varying DEFAULT NULL::character varying) RETURNS TABLE(codigo_ativo integer, codigo_cliente_ativo integer, numero_serie_ativo character varying, codigo_fabricante_ativo integer, modelo_ativo character varying, observacao_ativo character varying, data_input_ativo date, codigo_empresa_ativo integer)
+CREATE FUNCTION public.fn_select_cad_ativo_dados(p_codigo_empresa integer, p_codigo integer DEFAULT NULL::integer, p_codigo_cliente integer DEFAULT NULL::integer, p_numero_serie character varying DEFAULT NULL::character varying, p_codigo_fabricante integer DEFAULT NULL::integer, p_modelo character varying DEFAULT NULL::character varying, p_observacao character varying DEFAULT NULL::character varying) RETURNS TABLE(codigo_ativo integer, codigo_cliente_ativo integer, numero_serie_ativo character varying, codigo_fabricante_ativo integer, modelo_ativo character varying, observacao_ativo character varying, data_input_ativo date, codigo_empresa_ativo integer, nome_fantasia_parceiro character varying, contato_parceiro character varying, nome_fantasia_fabricante character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
@@ -519,8 +519,18 @@ BEGIN
         tb_cad_ativo.modelo,
         tb_cad_ativo.observacao,
         tb_cad_ativo.data_input,
-        tb_cad_ativo.codigo_empresa
+        tb_cad_ativo.codigo_empresa,
+		tb_cad_parceiro_negocio.nome_fantasia,
+		tb_cad_parceiro_negocio.contato,
+		tb_cad_fabricante.nome_fantasia
     FROM tb_cad_ativo
+	LEFT JOIN tb_cad_parceiro_negocio
+		ON	tb_cad_parceiro_negocio.codigo = tb_cad_ativo.codigo_cliente
+		AND	tb_cad_parceiro_negocio.codigo_empresa = tb_cad_ativo.codigo_empresa
+	LEFT JOIN tb_cad_fabricante
+		ON	tb_cad_fabricante.codigo = tb_cad_ativo.codigo_fabricante
+		AND	tb_cad_fabricante.codigo_empresa = tb_cad_ativo.codigo_empresa
+	
     WHERE (tb_cad_ativo.codigo = p_codigo OR p_codigo IS NULL)
       AND (tb_cad_ativo.codigo_cliente = p_codigo_cliente OR p_codigo_cliente IS NULL)
       AND (tb_cad_ativo.numero_serie LIKE '%' || p_numero_serie || '%' OR p_numero_serie IS NULL)
