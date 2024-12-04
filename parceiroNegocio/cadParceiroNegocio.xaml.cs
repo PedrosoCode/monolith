@@ -486,7 +486,8 @@ namespace monolith.parceiroNegocio
         }
 
         private void CarregarDadosParceiro(int? codigoParceiroAtual, 
-                                           int? codigoEmpresa)
+                                           int? codigoEmpresa
+                                           )
         {
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
 
@@ -496,8 +497,8 @@ namespace monolith.parceiroNegocio
                 {
                     conn.Open();
                     using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, "        +
-                                                                                                    "@p_codigo_empresa" +
-                                                                                                    ")", conn))
+                                                                                                   "@p_codigo_empresa"  +
+                                                                                                   ")", conn))
                     {
                         cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
                         cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa);
@@ -506,17 +507,25 @@ namespace monolith.parceiroNegocio
                         {
                             if (reader.Read())
                             {
-                                txtDocumentoDados.Text = reader["documento"]?.ToString();
-                                txtNomeFantasiaDados.Text = reader["nome_fantasia"]?.ToString();
-                                txtRazaoSocialDados.Text = reader["razao_social"]?.ToString();
-                                txtEmailDados.Text = reader["email"]?.ToString();
-                                txtContatoDados.Text = reader["contato"]?.ToString();
-                                txtTelefoneDados.Text = reader["telefone"]?.ToString();
-                                txtBairroDados.Text = reader["bairro"]?.ToString();
-                                txtLogradouroDados.Text = reader["logradouro"]?.ToString();
-                                txtNumeroDados.Text = reader["numero"]?.ToString();
-                                txtCEPDados.Text = reader["cep"]?.ToString();
-                                txtComplementoDados.Text = reader["complemento"]?.ToString();
+                                // Converter os dados do reader para um dicionário
+                                var dados = new Dictionary<string, object>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                                }
+
+                                // Preencher controles usando a função genérica
+                                LoadHelper.PreencherControle(txtDocumentoDados, "documento", dados);
+                                LoadHelper.PreencherControle(txtNomeFantasiaDados, "nome_fantasia", dados);
+                                LoadHelper.PreencherControle(txtRazaoSocialDados, "razao_social", dados);
+                                LoadHelper.PreencherControle(txtEmailDados, "email", dados);
+                                LoadHelper.PreencherControle(txtContatoDados, "contato", dados);
+                                LoadHelper.PreencherControle(txtTelefoneDados, "telefone", dados);
+                                LoadHelper.PreencherControle(txtBairroDados, "bairro", dados);
+                                LoadHelper.PreencherControle(txtLogradouroDados, "logradouro", dados);
+                                LoadHelper.PreencherControle(txtNumeroDados, "numero", dados);
+                                LoadHelper.PreencherControle(txtCEPDados, "cep", dados);
+                                LoadHelper.PreencherControle(txtComplementoDados, "complemento", dados);
 
                                 cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
                                 {
@@ -526,26 +535,26 @@ namespace monolith.parceiroNegocio
                                 };
                                 cboTipoDados.DisplayMemberPath = "Value";
                                 cboTipoDados.SelectedValuePath = "Key";
-                                cboTipoDados.SelectedValue = reader["tipo_parceiro"]?.ToString();
+                                LoadHelper.PreencherControle(cboTipoDados, "tipo_parceiro", dados);
 
                                 var paises = CarregarPaises();
                                 cboPaisDados.ItemsSource = paises;
                                 cboPaisDados.DisplayMemberPath = "Value";
                                 cboPaisDados.SelectedValuePath = "Key";
-                                cboPaisDados.SelectedValue = Convert.ToInt32(reader["codigo_pais"]);
+                                LoadHelper.PreencherControle(cboPaisDados, "codigo_pais", dados);
 
                                 var estados = CarregarEstados();
                                 cboEstadoDados.ItemsSource = estados;
                                 cboEstadoDados.DisplayMemberPath = "Value";
                                 cboEstadoDados.SelectedValuePath = "Key";
-                                cboEstadoDados.SelectedValue = Convert.ToInt32(reader["codigo_estado"]);
+                                LoadHelper.PreencherControle(cboEstadoDados, "codigo_estado", dados);
 
-                                string ufEstado = ObterUfPorId(Convert.ToInt32(reader["codigo_estado"]));
+                                string ufEstado = ObterUfPorId(Convert.ToInt32(dados["codigo_estado"]));
                                 var municipios = CarregarMunicipios(ufEstado);
                                 cboCidadeDados.ItemsSource = municipios;
                                 cboCidadeDados.DisplayMemberPath = "Value";
                                 cboCidadeDados.SelectedValuePath = "Key";
-                                cboCidadeDados.SelectedValue = Convert.ToInt32(reader["codigo_cidade"]);
+                                LoadHelper.PreencherControle(cboCidadeDados, "codigo_cidade", dados);
 
                                 MainTabControl.SelectedItem = TabDados;
                             }
@@ -558,6 +567,7 @@ namespace monolith.parceiroNegocio
                 }
             }
         }
+
 
         public class clsParceiro
         {
