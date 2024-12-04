@@ -489,85 +489,63 @@ namespace monolith.parceiroNegocio
                                            int? codigoEmpresa
                                            )
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
-
-            using (var conn = new NpgsqlConnection(connectionString))
+            try
             {
-                try
+                var dados = FuncsParceiroNegocio.ObterDadosParceiro(codigoParceiroAtual, 
+                                                                    codigoEmpresa
+                                                                    );
+
+                if (dados.Count > 0)
                 {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, "        +
-                                                                                                   "@p_codigo_empresa"  +
-                                                                                                   ")", conn))
+                    LoadHelper.PreencherControle(txtDocumentoDados,     "documento",        dados);
+                    LoadHelper.PreencherControle(txtNomeFantasiaDados,  "nome_fantasia",    dados);
+                    LoadHelper.PreencherControle(txtRazaoSocialDados,   "razao_social",     dados);
+                    LoadHelper.PreencherControle(txtEmailDados,         "email",            dados);
+                    LoadHelper.PreencherControle(txtContatoDados,       "contato",          dados);
+                    LoadHelper.PreencherControle(txtTelefoneDados,      "telefone",         dados);
+                    LoadHelper.PreencherControle(txtBairroDados,        "bairro",           dados);
+                    LoadHelper.PreencherControle(txtLogradouroDados,    "logradouro",       dados);
+                    LoadHelper.PreencherControle(txtNumeroDados,        "numero",           dados);
+                    LoadHelper.PreencherControle(txtCEPDados,           "cep",              dados);
+                    LoadHelper.PreencherControle(txtComplementoDados,   "complemento",      dados);
+
+                    cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
                     {
-                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
-                        cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa);
+                        new KeyValuePair<string, string>("A", "Ambos"),
+                        new KeyValuePair<string, string>("C", "Cliente"),
+                        new KeyValuePair<string, string>("F", "Fornecedor")
+                    };
+                    cboTipoDados.DisplayMemberPath = "Value";
+                    cboTipoDados.SelectedValuePath = "Key";
+                    LoadHelper.PreencherControle(cboTipoDados, "tipo_parceiro", dados);
 
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                // Converter os dados do reader para um dicionário
-                                var dados = new Dictionary<string, object>();
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                                }
+                    var paises = CarregarPaises();
+                    cboPaisDados.ItemsSource = paises;
+                    cboPaisDados.DisplayMemberPath = "Value";
+                    cboPaisDados.SelectedValuePath = "Key";
+                    LoadHelper.PreencherControle(cboPaisDados, "codigo_pais", dados);
 
-                                // Preencher controles usando a função genérica
-                                LoadHelper.PreencherControle(txtDocumentoDados, "documento", dados);
-                                LoadHelper.PreencherControle(txtNomeFantasiaDados, "nome_fantasia", dados);
-                                LoadHelper.PreencherControle(txtRazaoSocialDados, "razao_social", dados);
-                                LoadHelper.PreencherControle(txtEmailDados, "email", dados);
-                                LoadHelper.PreencherControle(txtContatoDados, "contato", dados);
-                                LoadHelper.PreencherControle(txtTelefoneDados, "telefone", dados);
-                                LoadHelper.PreencherControle(txtBairroDados, "bairro", dados);
-                                LoadHelper.PreencherControle(txtLogradouroDados, "logradouro", dados);
-                                LoadHelper.PreencherControle(txtNumeroDados, "numero", dados);
-                                LoadHelper.PreencherControle(txtCEPDados, "cep", dados);
-                                LoadHelper.PreencherControle(txtComplementoDados, "complemento", dados);
+                    var estados = CarregarEstados();
+                    cboEstadoDados.ItemsSource = estados;
+                    cboEstadoDados.DisplayMemberPath = "Value";
+                    cboEstadoDados.SelectedValuePath = "Key";
+                    LoadHelper.PreencherControle(cboEstadoDados, "codigo_estado", dados);
 
-                                cboTipoDados.ItemsSource = new List<KeyValuePair<string, string>>()
-                                {
-                                    new KeyValuePair<string, string>("A", "Ambos"),
-                                    new KeyValuePair<string, string>("C", "Cliente"),
-                                    new KeyValuePair<string, string>("F", "Fornecedor")
-                                };
-                                cboTipoDados.DisplayMemberPath = "Value";
-                                cboTipoDados.SelectedValuePath = "Key";
-                                LoadHelper.PreencherControle(cboTipoDados, "tipo_parceiro", dados);
+                    string ufEstado = ObterUfPorId(Convert.ToInt32(dados["codigo_estado"]));
+                    var municipios = CarregarMunicipios(ufEstado);
+                    cboCidadeDados.ItemsSource = municipios;
+                    cboCidadeDados.DisplayMemberPath = "Value";
+                    cboCidadeDados.SelectedValuePath = "Key";
+                    LoadHelper.PreencherControle(cboCidadeDados, "codigo_cidade", dados);
 
-                                var paises = CarregarPaises();
-                                cboPaisDados.ItemsSource = paises;
-                                cboPaisDados.DisplayMemberPath = "Value";
-                                cboPaisDados.SelectedValuePath = "Key";
-                                LoadHelper.PreencherControle(cboPaisDados, "codigo_pais", dados);
-
-                                var estados = CarregarEstados();
-                                cboEstadoDados.ItemsSource = estados;
-                                cboEstadoDados.DisplayMemberPath = "Value";
-                                cboEstadoDados.SelectedValuePath = "Key";
-                                LoadHelper.PreencherControle(cboEstadoDados, "codigo_estado", dados);
-
-                                string ufEstado = ObterUfPorId(Convert.ToInt32(dados["codigo_estado"]));
-                                var municipios = CarregarMunicipios(ufEstado);
-                                cboCidadeDados.ItemsSource = municipios;
-                                cboCidadeDados.DisplayMemberPath = "Value";
-                                cboCidadeDados.SelectedValuePath = "Key";
-                                LoadHelper.PreencherControle(cboCidadeDados, "codigo_cidade", dados);
-
-                                MainTabControl.SelectedItem = TabDados;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Erro ao carregar os detalhes do parceiro: {ex.Message}");
+                    MainTabControl.SelectedItem = TabDados;
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar os detalhes do parceiro: {ex.Message}");
+            }
         }
-
 
         public class clsParceiro
         {

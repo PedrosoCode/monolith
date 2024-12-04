@@ -249,5 +249,42 @@ namespace monolith.parceiroNegocio
         }
 
 
+            private readonly string connectionString;
+
+            public clsCadParceiroNegocio()
+            {
+                connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
+            }
+
+            public Dictionary<string, object> ObterDadosParceiro(int? codigoParceiroAtual, int? codigoEmpresa)
+            {
+                var dados = new Dictionary<string, object>();
+
+                using (var conn = new NpgsqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, @p_codigo_empresa)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa ?? (object)DBNull.Value);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return dados;
+            }
+
+
+
     }
 }
