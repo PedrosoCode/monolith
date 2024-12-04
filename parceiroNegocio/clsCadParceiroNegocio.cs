@@ -106,28 +106,21 @@ namespace monolith.parceiroNegocio
 
 
         public void excluirParceiroNegocio(int? codigoParceiroAtual)
-
-
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
-                using (var conn = new NpgsqlConnection(connectionString))
+                var parameters = new Dictionary<string, object>
                 {
-                    conn.Open();
+                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa   },
+                    { "@p_codigo_parceiro"  , codigoParceiroAtual           }
+                };
 
-                    using (var command = new NpgsqlCommand("CALL sp_delete_cadastro_parceiro_negocio(@p_codigo_empresa,"    +
-                                                                                                     "@p_codigo_parceiro" +
-                                                                                                     ")"
-                                                                                                     , conn))
-                    {
+                var commandText = "CALL sp_delete_cadastro_parceiro_negocio(@p_codigo_empresa, "    +
+                                                                           "@p_codigo_parceiro"     +
+                                                                           ")";
 
-                        command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);
-                        command.Parameters.AddWithValue("@p_codigo_parceiro", codigoParceiroAtual);
-
-                        command.ExecuteNonQuery();
-                    }
-                }
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(commandText, parameters);
 
                 MessageBox.Show("Parceiro deletado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -136,6 +129,7 @@ namespace monolith.parceiroNegocio
                 MessageBox.Show($"Erro ao deletar os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         public void insertParceiroNegocio(string sDocumento,
                                           string sCep,
@@ -153,84 +147,68 @@ namespace monolith.parceiroNegocio
                                           int? lCodigoCidade,
                                           int? iCodigoEstado
                                           )
-
-
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
+            bool isCnpj = sDocumento.Length == 14;
 
-                    using (var command = new NpgsqlCommand("CALL sp_insert_cadastro_basico_parceiro_negocio(@p_codigo_empresa,"    +
-                                                                                                            "@p_documento,"        +
-                                                                                                            "@p_cep,"              +
-                                                                                                            "@p_telefone,"         +
-                                                                                                            "@p_email,"            +
-                                                                                                            "@p_data_cadastro,"    +
-                                                                                                            "@p_tipo,"             +
-                                                                                                            "@p_nome_fantasia,"    +
-                                                                                                            "@p_razao_social,"     +
-                                                                                                            "@p_logradouro,"       +
-                                                                                                            "@p_numero,"           +
-                                                                                                            "@p_complemento,"      +
-                                                                                                            "@p_bairro,"           +
-                                                                                                            "@p_contato,"          +
-                                                                                                            "@p_codigo_pais,"      +
-                                                                                                            "@p_codigo_cidade,"    +
-                                                                                                            "@p_codigo_estado,"    +
-                                                                                                            "@p_tipo_documento" +
-                                                                                                            ")"
-                                                                                                            , conn))
-                    {
+            if (sDocumento.Length != 11 && !isCnpj)
+            {
+                throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
+            }
 
-                        bool is_cnpj = false;
-                        if (sDocumento.Length == 14)
-                        {
-                            is_cnpj = true;
-                        }
-                        else if (sDocumento.Length == 11)
-                        {
-                            is_cnpj = false;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
-                        }
+            if (sCep.Length != 8)
+            {
+                throw new ArgumentException("CEP inválido.");
+            }
 
+            var parameters = new Dictionary<string, object>
+            {
+                { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa           },
+                { "@p_documento"        , sDocumento                            },
+                { "@p_cep"              , sCep                                  },
+                { "@p_telefone"         , sTelefone                             },
+                { "@p_email"            , sEmail                                },
+                { "@p_data_cadastro"    , DateTime.Now                          },
+                { "@p_tipo"             , sTipo                                 },
+                { "@p_nome_fantasia"    , sNomeFantasia                         },
+                { "@p_razao_social"     , sRazaoSocial                          },
+                { "@p_logradouro"       , sLogradouro                           },
+                { "@p_numero"           , sNumero                               },
+                { "@p_complemento"      , sComplemento                          },
+                { "@p_bairro"           , sBairro                               },
+                { "@p_contato"          , sContato                              },
+                { "@p_codigo_pais"      , lCodigoPais ?? (object)DBNull.Value   },
+                { "@p_codigo_cidade"    , lCodigoCidade ?? (object)DBNull.Value },
+                { "@p_codigo_estado"    , iCodigoEstado ?? (object)DBNull.Value },
+                { "@p_tipo_documento"   , isCnpj                                }
+            };
 
-                        if (sCep.Length != 8)
-                        {
-                            throw new ArgumentException("CEP inválido.");
-                        }
+            var commandText = "CALL sp_insert_cadastro_basico_parceiro_negocio(@p_codigo_empresa, " +
+                                                                              "@p_documento, "      +
+                                                                              "@p_cep, "            +
+                                                                              "@p_telefone, "       +
+                                                                              "@p_email, "          +
+                                                                              "@p_data_cadastro, "  +
+                                                                              "@p_tipo, "           +
+                                                                              "@p_nome_fantasia, "  +
+                                                                              "@p_razao_social, "   +
+                                                                              "@p_logradouro, "     +
+                                                                              "@p_numero, "         +
+                                                                              "@p_complemento, "    +
+                                                                              "@p_bairro, "         +
+                                                                              "@p_contato, "        +
+                                                                              "@p_codigo_pais, "    +
+                                                                              "@p_codigo_cidade, "  +
+                                                                              "@p_codigo_estado, "  +
+                                                                              "@p_tipo_documento"   +
+                                                                              ")";
 
-                        command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);
-                        command.Parameters.AddWithValue("@p_documento", sDocumento);
-                        command.Parameters.AddWithValue("@p_cep", sCep);
-                        command.Parameters.AddWithValue("@p_telefone", sTelefone);
-                        command.Parameters.AddWithValue("@p_email", sEmail);
-                        command.Parameters.AddWithValue("@p_data_cadastro", DateTime.Now);
-                        command.Parameters.AddWithValue("@p_tipo", sTipo);
-                        command.Parameters.AddWithValue("@p_nome_fantasia", sNomeFantasia);
-                        command.Parameters.AddWithValue("@p_razao_social", sRazaoSocial);
-                        command.Parameters.AddWithValue("@p_logradouro", sLogradouro);
-                        command.Parameters.AddWithValue("@p_numero", sNumero);
-                        command.Parameters.AddWithValue("@p_complemento", sComplemento);
-                        command.Parameters.AddWithValue("@p_bairro", sBairro);
-                        command.Parameters.AddWithValue("@p_contato", sContato);
-                        command.Parameters.AddWithValue("@p_codigo_pais", lCodigoPais ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@p_codigo_cidade", lCodigoCidade ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@p_codigo_estado", iCodigoEstado ?? (object)DBNull.Value);
-                        command.Parameters.AddWithValue("@p_tipo_documento", is_cnpj);
+            // Utiliza o DatabaseHelper para executar o comando
+            var dbHelper = new DatabaseHelper();
+            dbHelper.ExecuteCommand(commandText, parameters);
 
-
-
-                        command.ExecuteNonQuery();
-                    }
-                }
-
-                MessageBox.Show("Dados inseridos com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Dados inseridos com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -239,41 +217,43 @@ namespace monolith.parceiroNegocio
         }
 
 
-            private readonly string connectionString;
+        public Dictionary<string, object> ObterDadosParceiro(int? codigoParceiroAtual, 
+                                                             int? codigoEmpresa)
+        {
+            var dados = new Dictionary<string, object>();
 
-            public clsCadParceiroNegocio()
+            try
             {
-                connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
-            }
-
-            public Dictionary<string, object> ObterDadosParceiro(int? codigoParceiroAtual, int? codigoEmpresa)
-            {
-                var dados = new Dictionary<string, object>();
-
-                using (var conn = new NpgsqlConnection(connectionString))
+                
+                var parameters = new Dictionary<string, object>
                 {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand("SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, @p_codigo_empresa)", conn))
-                    {
-                        cmd.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual ?? (object)DBNull.Value);
-                        cmd.Parameters.AddWithValue("@p_codigo_empresa", codigoEmpresa ?? (object)DBNull.Value);
+                    { "@p_codigo"           , codigoParceiroAtual   ?? (object)DBNull.Value },
+                    { "@p_codigo_empresa"   , codigoEmpresa         ?? (object)DBNull.Value }
+                };
+                
+                string commandText = "SELECT * FROM fn_cad_parceiro_negocio_dados(@p_codigo, "          +
+                                                                                 "@p_codigo_empresa"    +
+                                                                                 ")";
 
-                        using (var reader = cmd.ExecuteReader())
+                var dbHelper = new DatabaseHelper();
+                using (var reader = dbHelper.ExecuteReader(commandText, parameters))
+                {
+                    if (reader.Read())
+                    {
+                        for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            if (reader.Read())
-                            {
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                                }
-                            }
+                            dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
                         }
                     }
                 }
-
-                return dados;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao obter dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+            return dados;
+        }
 
 
     }

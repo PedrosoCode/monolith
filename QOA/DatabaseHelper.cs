@@ -41,4 +41,21 @@ public class DatabaseHelper
             }
         }
     }
+
+    public NpgsqlDataReader ExecuteReader(string commandText, Dictionary<string, object> parameters)
+    {
+        var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        using (var cmd = new NpgsqlCommand(commandText, conn))
+        {
+            foreach (var param in parameters)
+            {
+                cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+            }
+
+            return cmd.ExecuteReader();
+        }
+    }
+
+
 }
