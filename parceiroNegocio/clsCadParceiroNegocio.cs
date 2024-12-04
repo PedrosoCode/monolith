@@ -14,96 +14,85 @@ namespace monolith.parceiroNegocio
     {
 
 
-        public void updateParceiroNegocio(int?  codigoParceiroAtual ,
-                                          string sDocumento         ,
-                                          string sNomeFantasia      ,
-                                          string sRazaoSocial       ,
-                                          string sEmail             ,
-                                          string sContato           ,
-                                          string sTelefone          ,
-                                          string sTipo              ,
-                                          int? lCodigoPais          ,
-                                          int? iCodigoEstado        ,
-                                          int? lCodigocidade        ,
-                                          string sCep               ,
-                                          string sLogradouro        ,
-                                          string sNumero            ,
-                                          string sComplemento       ,
-                                          string sBairro
-                                          )
+        public void updateParceiroNegocio(int? codigoParceiroAtual,
+                                   string sDocumento,
+                                   string sNomeFantasia,
+                                   string sRazaoSocial,
+                                   string sEmail,
+                                   string sContato,
+                                   string sTelefone,
+                                   string sTipo,
+                                   int? lCodigoPais,
+                                   int? iCodigoEstado,
+                                   int? lCodigocidade,
+                                   string sCep,
+                                   string sLogradouro,
+                                   string sNumero,
+                                   string sComplemento,
+                                   string sBairro)
         {
             try
             {
-                string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
-                using (var conn = new NpgsqlConnection(connectionString))
+                // Validação de CPF/CNPJ
+                bool is_cnpj = (sDocumento.Length == 14);
+                if (sDocumento.Length != 11 && sDocumento.Length != 14)
                 {
-                    conn.Open();
-
-                    using (var command = new NpgsqlCommand("CALL sp_atualizar_parceiro_negocio(@p_codigo, "         +
-                                                                                              "@p_codigo_empresa, " +
-                                                                                              "@p_documento,"       +
-                                                                                              "@p_nome_fantasia,"   +
-                                                                                              "@p_razao_social,"    +
-                                                                                              "@p_email,"           +
-                                                                                              "@p_contato,"         +
-                                                                                              "@p_telefone,"        +
-                                                                                              "@p_tipo,"            +
-                                                                                              "@p_codigo_pais,"     +
-                                                                                              "@p_codigo_estado,"   +
-                                                                                              "@p_codigo_cidade,"   +
-                                                                                              "@p_tipo_documento,"  +
-                                                                                              "@p_cep,"             +
-                                                                                              "@p_logradouro,"      +
-                                                                                              "@p_numero,"          +
-                                                                                              "@p_complemento,"     +
-                                                                                              "@p_bairro"           +
-                                                                                              ")"
-                                                                                              , conn))
-                    {
-
-                        bool is_cnpj = false;
-                        if (sDocumento.Length == 14)
-                        {
-                            is_cnpj = true;
-                        }
-                        else if (sDocumento.Length == 11)
-                        {
-                            is_cnpj = false;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
-                        }
-
-
-                        if (sCep.Length != 8)
-                        {
-                            throw new ArgumentException("CEP inválido.");
-                        }
-
-                        // Define os parâmetros da stored procedure
-                        command.Parameters.AddWithValue("@p_codigo", codigoParceiroAtual);
-                        command.Parameters.AddWithValue("@p_codigo_empresa", Globals.GlobalCodigoEmpresa);
-                        command.Parameters.AddWithValue("@p_documento", sDocumento);
-                        command.Parameters.AddWithValue("@p_nome_fantasia", sNomeFantasia);
-                        command.Parameters.AddWithValue("@p_razao_social", sRazaoSocial);
-                        command.Parameters.AddWithValue("@p_email", sEmail);
-                        command.Parameters.AddWithValue("@p_contato", sContato);
-                        command.Parameters.AddWithValue("@p_telefone", sTelefone);
-                        command.Parameters.AddWithValue("@p_tipo", sTipo);
-                        command.Parameters.AddWithValue("@p_codigo_pais", lCodigoPais);
-                        command.Parameters.AddWithValue("@p_codigo_estado", iCodigoEstado);
-                        command.Parameters.AddWithValue("@p_codigo_cidade", lCodigocidade);
-                        command.Parameters.AddWithValue("@p_tipo_documento", is_cnpj);
-                        command.Parameters.AddWithValue("@p_cep", sCep);
-                        command.Parameters.AddWithValue("@p_logradouro", sLogradouro);
-                        command.Parameters.AddWithValue("@p_numero", sNumero);
-                        command.Parameters.AddWithValue("@p_complemento", sComplemento);
-                        command.Parameters.AddWithValue("@p_bairro", sBairro);
-
-                        command.ExecuteNonQuery();
-                    }
+                    throw new ArgumentException("O número fornecido não é um CPF ou CNPJ válido.");
                 }
+
+                // Validação de CEP
+                if (sCep.Length != 8)
+                {
+                    throw new ArgumentException("CEP inválido.");
+                }
+
+                // Prepare os parâmetros para o comando
+                var parameters = new Dictionary<string, object>
+                    {
+                        { "@p_codigo"           ,  codigoParceiroAtual          },
+                        { "@p_codigo_empresa"   ,  Globals.GlobalCodigoEmpresa  },
+                        { "@p_documento"        ,  sDocumento                   },
+                        { "@p_nome_fantasia"    ,  sNomeFantasia                },
+                        { "@p_razao_social"     ,  sRazaoSocial                 },
+                        { "@p_email"            ,  sEmail                       },
+                        { "@p_contato"          ,  sContato                     },
+                        { "@p_telefone"         ,  sTelefone                    },
+                        { "@p_tipo"             ,  sTipo                        },
+                        { "@p_codigo_pais"      ,  lCodigoPais                  },
+                        { "@p_codigo_estado"    ,  iCodigoEstado                },
+                        { "@p_codigo_cidade"    ,  lCodigocidade                },
+                        { "@p_tipo_documento"   ,  is_cnpj                      },
+                        { "@p_cep"              ,  sCep                         },
+                        { "@p_logradouro"       ,  sLogradouro                  },
+                        { "@p_numero"           ,  sNumero                      },
+                        { "@p_complemento"      ,  sComplemento                 },
+                        { "@p_bairro"           ,  sBairro                      }  
+                    };
+
+                // Chama o DatabaseHelper para executar o comando
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(
+                    "CALL sp_atualizar_parceiro_negocio(@p_codigo, "            +
+                                                       "@p_codigo_empresa, "    +
+                                                       "@p_documento, "         +
+                                                       "@p_nome_fantasia, "     +
+                                                       "@p_razao_social, "      +
+                                                       "@p_email, "             +
+                                                       "@p_contato, "           +
+                                                       "@p_telefone, "          +
+                                                       "@p_tipo, "              +
+                                                       "@p_codigo_pais, "       +
+                                                       "@p_codigo_estado, "     +
+                                                       "@p_codigo_cidade, "     +
+                                                       "@p_tipo_documento, "    +
+                                                       "@p_cep, "               +
+                                                       "@p_logradouro, "        +
+                                                       "@p_numero, "            +
+                                                       "@p_complemento, "       +
+                                                       "@p_bairro"              +
+                                                       ")",
+                    parameters
+                );
 
                 MessageBox.Show("Dados atualizados com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -113,7 +102,8 @@ namespace monolith.parceiroNegocio
             }
         }
 
-        
+
+
 
         public void excluirParceiroNegocio(int? codigoParceiroAtual)
 
