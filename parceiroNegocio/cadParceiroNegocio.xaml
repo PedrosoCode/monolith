@@ -215,7 +215,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel Margin="5">
                                         <Label Content="País"/>
-                                        <ComboBox x:Name="cboPaisDados" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Codigo" Width="100"/>
+                                        <ComboBox x:Name="cboPaisDados" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Key" Width="100"/>
                                     </StackPanel>
                                     <StackPanel Margin="5">
                                         <Label Content="Estado"/>
@@ -223,7 +223,7 @@
                                     </StackPanel>
                                     <StackPanel Margin="5">
                                         <Label Content="Cidade"/>
-                                        <ComboBox x:Name="cboCidadeDados" IsEditable="True" IsTextSearchEnabled="True" SelectedValuePath="Codigo" Width="160"/>
+                                        <ComboBox x:Name="cboCidadeDados"  SelectedValuePath="Key" DisplayMemberPath="Value"  Width="160" />
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>

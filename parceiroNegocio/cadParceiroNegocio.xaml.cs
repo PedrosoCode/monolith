@@ -24,6 +24,7 @@ namespace monolith.parceiroNegocio
     {
 
         private int? codigoParceiroAtual;
+        private bool? bIsloading = false;
         clsCadParceiroNegocio FuncsParceiroNegocio = new clsCadParceiroNegocio();
 
 
@@ -216,6 +217,39 @@ namespace monolith.parceiroNegocio
             return municipios;
         }
 
+        private List<KeyValuePair<int, string>> CarregarMunicipiosDados()
+        {
+            var municipios = new List<KeyValuePair<int, string>>();
+            string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
+
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand("SELECT id, nome FROM municipio", conn))
+                    {
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int id = Convert.ToInt32(reader["id"]);
+                                string nome = reader["nome"].ToString();
+                                municipios.Add(new KeyValuePair<int, string>(id, nome));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar municípios: {ex.Message}");
+                }
+            }
+
+            return municipios;
+        }
+
         private string? ObterUfPorId(int idEstado)
         {
             string? uf = null;
@@ -243,33 +277,42 @@ namespace monolith.parceiroNegocio
 
         private void cboEstado_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var comboBox = sender as ComboBox;
 
-            // Verificar qual ComboBox disparou o evento
-            if (comboBox?.SelectedValue is int selectedEstadoId)
+            if (bIsloading == false)
             {
-                string? ufEstado = ObterUfPorId(selectedEstadoId);
+                var comboBox = sender as ComboBox;
 
-                if (!string.IsNullOrEmpty(ufEstado))
+                // Verificar qual ComboBox disparou o evento
+                if (comboBox?.SelectedValue is int selectedEstadoId)
                 {
-                    var municipios = CarregarMunicipios(ufEstado);
+                    string? ufEstado = ObterUfPorId(selectedEstadoId);
 
-                    if (comboBox.Name == "cboEstado") // Aba de Listagem
+                    if (!string.IsNullOrEmpty(ufEstado))
                     {
-                        cboCidade.ItemsSource = municipios;
-                        cboCidade.DisplayMemberPath = "Value";
-                        cboCidade.SelectedValuePath = "Key";
-                        cboCidade.IsEnabled = municipios.Count > 0;
-                    }
-                    else if (comboBox.Name == "cboEstadoDados") // Aba de Dados
-                    {
-                        cboCidadeDados.ItemsSource = municipios;
-                        cboCidadeDados.DisplayMemberPath = "Value";
-                        cboCidadeDados.SelectedValuePath = "Key";
-                        cboCidadeDados.IsEnabled = municipios.Count > 0;
+                        var municipios = CarregarMunicipios(ufEstado);
+
+                        if (comboBox.Name == "cboEstado") // Aba de Listagem
+                        {
+                            cboCidade.ItemsSource = municipios;
+                            cboCidade.DisplayMemberPath = "Value";
+                            cboCidade.SelectedValuePath = "Key";
+                            cboCidade.IsEnabled = municipios.Count > 0;
+                        }
+                        else if (comboBox.Name == "cboEstadoDados") // Aba de Dados
+                        {
+                            cboCidadeDados.ItemsSource = municipios;
+                            cboCidadeDados.DisplayMemberPath = "Value";
+                            cboCidadeDados.SelectedValuePath = "Key";
+                            cboCidadeDados.IsEnabled = municipios.Count > 0;
+                        }
                     }
                 }
             }
+            else
+            {
+                bIsloading = false;
+            }
+
         }
 
         private void filtrar()
@@ -384,6 +427,9 @@ namespace monolith.parceiroNegocio
 
         private void BtnEditar_Click(object sender, RoutedEventArgs e)
         {
+
+            bIsloading = true;
+
             var button = sender as Button;
             if (button != null && button.Tag != null)
             {
@@ -413,8 +459,6 @@ namespace monolith.parceiroNegocio
             try
             {
 
-            
-
             String sDocumento       = txtDocumentoDados.Text.Trim();
             String sNomeFantasia    = txtNomeFantasiaDados.Text.Trim();
             String sRazaoSocial     = txtRazaoSocialDados.Text.Trim();
@@ -422,9 +466,9 @@ namespace monolith.parceiroNegocio
             String sContato         = txtContatoDados.Text.Trim();
             String sTelefone        = txtTelefoneDados.Text.Trim();
             String? sTipo           = cboTipoDados.SelectedValue as String;
-            int? lCodigoPais        = cboPaisDados.SelectedValue as int?;
-            int? iCodigoEstado      = cboEstadoDados.SelectedValue as int?;
-            int? lCodigoCidade      = cboCidadeDados.SelectedValue as int?;
+            int? lCodigoPais        = cboPaisDados.SelectedValue    != null ? Convert.ToInt32(cboPaisDados.SelectedValue)   : (int?)null;
+            int? iCodigoEstado      = cboEstadoDados.SelectedValue  != null ? Convert.ToInt32(cboEstadoDados.SelectedValue) : (int?)null;
+            int? lCodigoCidade      = cboCidadeDados.SelectedValue  != null ? Convert.ToInt32(cboCidadeDados.SelectedValue) : (int?)null;    
             String sCep             = txtCEPDados.Text.Trim();
             String sLogradouro      = txtLogradouroDados.Text.Trim();
             String sNumero          = txtNumeroDados.Text.Trim();
@@ -531,8 +575,7 @@ namespace monolith.parceiroNegocio
                     cboEstadoDados.SelectedValuePath = "Key";
                     LoadHelper.PreencherControle(cboEstadoDados, "codigo_estado", dados);
 
-                    string ufEstado = ObterUfPorId(Convert.ToInt32(dados["codigo_estado"]));
-                    var municipios = CarregarMunicipios(ufEstado);
+                    var municipios = CarregarMunicipiosDados();
                     cboCidadeDados.ItemsSource = municipios;
                     cboCidadeDados.DisplayMemberPath = "Value";
                     cboCidadeDados.SelectedValuePath = "Key";
