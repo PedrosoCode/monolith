@@ -9,6 +9,8 @@ using System.Windows.Media;
 using monolith.parceiroNegocio;
 using Npgsql;
 using Monolith.Ativos;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace monolith.ativos
 {
@@ -110,6 +112,31 @@ namespace monolith.ativos
             TabListagem.Visibility = Visibility.Visible;
             TabImagem.Visibility = Visibility.Visible;  
             MainTabControl.SelectedItem = TabListagem;
+        }
+
+
+        // Evento para abrir a imagem em alta resolução
+        // Evento para abrir a imagem em alta resolução
+        // Declara a variável 'popUpImagem' no escopo da classe
+        private popAtivosImagem popUpImagem;
+
+        private void OnImageClick(object sender, MouseButtonEventArgs e)
+        {
+            var imageControl = sender as Image;
+            if (imageControl != null)
+            {
+                string caminhoCompleto = imageControl.Source.ToString().Replace("file:///", "");
+                if (File.Exists(caminhoCompleto))
+                {
+                    // Cria e exibe a janela de imagem em alta resolução
+                    popUpImagem = new popAtivosImagem(caminhoCompleto);
+                    popUpImagem.ShowDialog(); // Isso vai abrir a janela como modal
+                }
+                else
+                {
+                    MessageBox.Show("Arquivo não encontrado.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
 
