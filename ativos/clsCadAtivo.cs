@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Monolith.Ativos;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -129,7 +130,47 @@ namespace monolith.ativos
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-        
+        public List<FotoAtivo> ObterCaminhosImagens(int? iCodigoAtivo)
+        {
+            var fotos = new List<FotoAtivo>();
+
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa           },
+                    { "@p_codigo"           , iCodigoAtivo ?? (object)DBNull.Value  }
+                };
+
+                string commandText = "SELECT caminho_completo, titulo " +
+                                     "FROM tb_cad_ativo_foto " +
+                                     "WHERE codigo_empresa = @p_codigo_empresa";
+
+                var dbHelper = new DatabaseHelper();
+                using (var reader = dbHelper.ExecuteReader(commandText, parameters))
+                {
+                    while (reader.Read())
+                    {
+                        if (!reader.IsDBNull(0))
+                        {
+                            var caminhoCompleto = reader.GetString(0);
+                            var nomeImagem = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
+                            fotos.Add(new FotoAtivo(caminhoCompleto, nomeImagem));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao obter caminhos das imagens: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return fotos;
+        }
+
+
+
+
 
 
 
