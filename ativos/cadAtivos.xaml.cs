@@ -11,6 +11,7 @@ using Npgsql;
 using Monolith.Ativos;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using monolith.controls;
 
 namespace monolith.ativos
 {
@@ -20,7 +21,7 @@ namespace monolith.ativos
         private int? iCodigoAtivoAtual;
         clsCadAtivo FuncsCadAtivo = new clsCadAtivo();
         public ObservableCollection<FotoAtivo> cFotosAtivo { get; set; }
-        private int iIndexImagemAtivoAtual = 0;
+        private GenPopVisualizaImagem genImageViewer;
 
 
         public cadAtivos()
@@ -114,12 +115,6 @@ namespace monolith.ativos
             MainTabControl.SelectedItem = TabListagem;
         }
 
-
-        // Evento para abrir a imagem em alta resolução
-        // Evento para abrir a imagem em alta resolução
-        // Declara a variável 'popUpImagem' no escopo da classe
-        private popAtivosImagem popUpImagem;
-
         private void OnImageClick(object sender, MouseButtonEventArgs e)
         {
             var imageControl = sender as Image;
@@ -128,9 +123,19 @@ namespace monolith.ativos
                 string caminhoCompleto = imageControl.Source.ToString().Replace("file:///", "");
                 if (File.Exists(caminhoCompleto))
                 {
-                    // Cria e exibe a janela de imagem em alta resolução
-                    popUpImagem = new popAtivosImagem(caminhoCompleto);
-                    popUpImagem.ShowDialog(); // Isso vai abrir a janela como modal
+                    if (genImageViewer == null)
+                    {
+                        genImageViewer = new GenPopVisualizaImagem();
+                        genImageViewer.HorizontalAlignment = HorizontalAlignment.Stretch;
+                        genImageViewer.VerticalAlignment = VerticalAlignment.Stretch;
+                        genImageViewer.Margin = new Thickness(10);
+
+                        GridFotos.Children.Add(genImageViewer);
+                    }
+
+                    genImageViewer.LoadImage(caminhoCompleto);
+
+                    genImageViewer.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -138,6 +143,15 @@ namespace monolith.ativos
                 }
             }
         }
+
+        private void CloseImageViewer()
+        {
+            if (genImageViewer != null)
+            {
+                genImageViewer.Visibility = Visibility.Collapsed;
+            }
+        }
+
 
 
 
