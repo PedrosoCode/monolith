@@ -83,12 +83,12 @@ namespace monolith.ativos
         }
 
         public void CarregarAtivos(DataGrid dataGrid,
-                                    int? codigo              = null,
-                                    int? codigoCliente       = null,
-                                    string numeroSerie       = null,
-                                    int? codigoFabricante    = null,
-                                    string modelo            = null,
-                                    string observacao        = null)
+                                   int? codigoCliente       = null,
+                                   string numeroSerie       = null,
+                                   int? codigoFabricante    = null,
+                                   string modelo            = null,
+                                   string observacao        = null
+                                   )
         {
             var dataTable = new System.Data.DataTable();
             string connectionString = ConfigurationManager.ConnectionStrings["ConnPostgres"].ConnectionString;
@@ -98,17 +98,15 @@ namespace monolith.ativos
                 try
                 {
                     conn.Open();
-                    using (var cmd = new NpgsqlCommand("SELECT * FROM public.fn_select_cad_ativo_dados(@p_codigo_empresa, " +
-                                                                                                          "@p_codigo, " +
-                                                                                                          "@p_codigo_cliente, " +
-                                                                                                          "@p_numero_serie, " +
-                                                                                                          "@p_codigo_fabricante, " +
-                                                                                                          "@p_modelo, " +
-                                                                                                          "@p_observacao" +
-                                                                                                          ")", conn))
+                    using (var cmd = new NpgsqlCommand("SELECT * FROM public.fn_select_cad_ativo_dados(@p_codigo_empresa, "      +
+                                                                                                       "@p_codigo_cliente, "     +
+                                                                                                       "@p_numero_serie, "       +
+                                                                                                       "@p_codigo_fabricante, "  +
+                                                                                                       "@p_modelo, "             +
+                                                                                                       "@p_observacao"           +
+                                                                                                       ")", conn))
                     {
                         cmd.Parameters.AddWithValue("p_codigo_empresa", Globals.GlobalCodigoEmpresa);
-                        cmd.Parameters.AddWithValue("p_codigo", (object)codigo ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("p_codigo_cliente", (object)codigoCliente ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("p_numero_serie", (object)numeroSerie ?? DBNull.Value);
                         cmd.Parameters.AddWithValue("p_codigo_fabricante", (object)codigoFabricante ?? DBNull.Value);
@@ -143,7 +141,7 @@ namespace monolith.ativos
                 };
 
                 string commandText = "SELECT caminho_completo, titulo " +
-                                     "FROM tb_cad_ativo_foto " +
+                                     "FROM tb_cad_ativo_foto "          +
                                      "WHERE codigo_empresa = @p_codigo_empresa";
 
                 var dbHelper = new DatabaseHelper();
@@ -168,7 +166,43 @@ namespace monolith.ativos
             return fotos;
         }
 
+        public Dictionary<string, object> LoadDadosAtivo(int? iCodigoAtivoAtual
+                                                        )
+        {
+            var dados = new Dictionary<string, object>();
 
+            try
+            {
+
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa               },
+                    { "@p_codigo_ativo"     , iCodigoAtivoAtual ?? (object)DBNull.Value }
+                };
+
+                string commandText = "SELECT * FROM fn_cadastro_ativo_select_dados(@p_codigo_empresa, " +
+                                                                                  "@p_codigo_ativo"     +
+                                                                                  ")";
+
+                var dbHelper = new DatabaseHelper();
+                using (var reader = dbHelper.ExecuteReader(commandText, parameters))
+                {
+                    if (reader.Read())
+                    {
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            dados[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao obter dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return dados;
+        }
 
 
 

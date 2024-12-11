@@ -80,6 +80,37 @@ $$;
 ALTER FUNCTION public.fn_cad_parceiro_negocio_dados(p_codigo integer, p_codigo_empresa integer) OWNER TO postgres;
 
 --
+-- Name: fn_cadastro_ativo_select_dados(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_cadastro_ativo_select_dados(p_codigo_empresa integer, p_codigo_ativo integer) RETURNS TABLE(codigo_ativo integer, codigo_parceiro_negocio integer, numero_serie character varying, codigo_fabricante integer, modelo character varying, observacao character varying, data_input date, codigo_empresa integer, descricao text, alias character varying, data_ultima_alteracao date)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY 
+	SELECT 
+		tb_cad_ativo.codigo,       
+		tb_cad_ativo.codigo_cliente,      
+		tb_cad_ativo.numero_serie,        
+		tb_cad_ativo.codigo_fabricante,        
+		tb_cad_ativo.modelo,        
+		tb_cad_ativo.observacao,       
+		tb_cad_ativo.data_input,      
+		tb_cad_ativo.codigo_empresa,       
+		tb_cad_ativo.descricao,      
+		tb_cad_ativo.alias,       
+		tb_cad_ativo.data_ultima_alteracao      
+	FROM tb_cad_ativo
+	WHERE tb_cad_ativo.codigo = p_codigo_ativo
+	AND   tb_cad_ativo.codigo_empresa = p_codigo_empresa
+	;
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_cadastro_ativo_select_dados(p_codigo_empresa integer, p_codigo_ativo integer) OWNER TO postgres;
+
+--
 -- Name: fn_cadastro_listar_tecnico(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1880,6 +1911,17 @@ ALTER SEQUENCE public.tb_cad_usuario_codigo_seq OWNER TO postgres;
 
 ALTER SEQUENCE public.tb_cad_usuario_codigo_seq OWNED BY public.tb_cad_usuario.codigo;
 
+
+--
+-- Name: tb_cfg_caminho_arquivos_gerais; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tb_cfg_caminho_arquivos_gerais (
+    imagem_ativo character varying
+);
+
+
+ALTER TABLE public.tb_cfg_caminho_arquivos_gerais OWNER TO postgres;
 
 --
 -- Name: tb_info_empresa; Type: TABLE; Schema: public; Owner: postgres

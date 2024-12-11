@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Documents;
 
 public static class LoadHelper
 {
@@ -33,6 +34,20 @@ public static class LoadHelper
                 case Label label:
                     label.Content = valor?.ToString() ?? string.Empty;
                     break;
+
+                case RichTextBox richTextBox:
+                    if (valor != null)
+                    {
+                        var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+                        textRange.Text = valor.ToString();
+                    }
+                    else
+                    {
+                        var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+                        textRange.Text = string.Empty; // Limpa o conteúdo se o valor for nulo
+                    }
+                    break;
+
 
                 // Adicione outros controles conforme necessário.
                 default:
