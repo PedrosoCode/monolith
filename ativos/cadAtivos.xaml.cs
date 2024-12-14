@@ -12,6 +12,7 @@ using Monolith.Ativos;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using monolith.controls;
+using Microsoft.Win32;
 
 namespace monolith.ativos
 {
@@ -177,6 +178,9 @@ namespace monolith.ativos
                 }
             }
         }
+
+
+
         #endregion
 
         private void BtnVoltar_Click(object sender, RoutedEventArgs e)
@@ -188,8 +192,65 @@ namespace monolith.ativos
             MainTabControl.SelectedItem = TabListagem;
         }
 
+        private void btnInserirImagem_Click(object sender, RoutedEventArgs e)
+        {
+            int? iCodigoAtivo = iCodigoAtivoAtual;
+            string sArquivo = "";
+            string sCaminhoUpload = "";
+            string sNomeFoto = "";
+
+            if (iCodigoAtivo != null) {
+
+                popInputboxTituloFoto inputBox = new popInputboxTituloFoto("Digite o título da foto");
+                bool? result = inputBox.ShowDialog();
+
+                if (result == true)  
+                {
+                    sNomeFoto = inputBox.TituloFoto; 
+                }
+                else
+                {
+                    MessageBox.Show("É necessário um título para a imagem.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; 
+                }
+
+                sArquivo = SelecionarImagem();
+                sCaminhoUpload = FuncsCadAtivo.ObterCaminhoUpload();
+                FuncsCadAtivo.UploadImagem(iCodigoAtivo,
+                                           sArquivo,
+                                           sCaminhoUpload,
+                                           sNomeFoto
+                                           );
+
+            }
+            else
+            {
+                MessageBox.Show("Primeiro crie ou selecione um ativo antes de definir a imagem.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
 
 
+
+
+        }
+
+        
+
+
+        private string SelecionarImagem()
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Arquivos de Imagem (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png",
+                Title = "Selecione uma imagem"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                return openFileDialog.FileName;
+            }
+
+            return null;
+        }
 
 
 

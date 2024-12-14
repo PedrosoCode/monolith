@@ -57,5 +57,14 @@ public class DatabaseHelper
         }
     }
 
+    public NpgsqlDataReader ExecuteReader(string commandText)
+    {
+        var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        using (var cmd = new NpgsqlCommand(commandText, conn))
+        {
+            return cmd.ExecuteReader(); // Executa a consulta sem parâmetros
+        }
+    }
 
 }

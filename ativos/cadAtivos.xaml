@@ -151,76 +151,102 @@
 
                         <!-- GroupBox Maior -->
                         <GroupBox Header="Informações do Ativo" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Margin="5">
-                                    <Label Content="N° Série"/>
-                                    <TextBox Name="txtNserieDados" 
-                                             Width="100"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <Label Content="Modelo"/>
-                                    <TextBox Name="txtModeloDados" 
-                                             Width="160"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <Label Content="Alias"/>
-                                    <TextBox Name="txtAliasDados" 
-                                             Width="160"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <Label Content="Observação"/>
-                                    <TextBox Name="txtObservacaoDados" 
-                                             Width="160"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <Label Content="Parceiro de negócio"/>
-                                    <ComboBox x:Name="cboParceiroNegocioDados" 
-                                              IsEditable="True" 
-                                              IsTextSearchEnabled="True" 
-                                              SelectedValuePath="Codigo" 
-                                              Width="160"/>
-                                </StackPanel>
-                                <StackPanel Margin="5">
-                                    <Label Content="Fabricante"/>
-                                    <ComboBox x:Name="cbofabricanteDados" 
-                                              IsEditable="True" 
-                                              IsTextSearchEnabled="True" 
-                                              SelectedValuePath="Codigo" 
-                                              Width="160"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Controles de Entrada -->
+                                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                                    <StackPanel Margin="5">
+                                        <Label Content="N° Série"/>
+                                        <TextBox Name="txtNserieDados" Width="100"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <Label Content="Modelo"/>
+                                        <TextBox Name="txtModeloDados" Width="160"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <Label Content="Alias"/>
+                                        <TextBox Name="txtAliasDados" Width="160"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <Label Content="Observação"/>
+                                        <TextBox Name="txtObservacaoDados" Width="160"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <Label Content="Parceiro de negócio"/>
+                                        <ComboBox x:Name="cboParceiroNegocioDados" 
+                                      IsEditable="True" 
+                                      IsTextSearchEnabled="True" 
+                                      SelectedValuePath="Codigo" 
+                                      Width="160"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <Label Content="Fabricante"/>
+                                        <ComboBox x:Name="cbofabricanteDados" 
+                                      IsEditable="True" 
+                                      IsTextSearchEnabled="True" 
+                                      SelectedValuePath="Codigo" 
+                                      Width="160"/>
+                                    </StackPanel>
                                 </StackPanel>
 
-                            </StackPanel>
+                                <!-- Botão "Inserir Imagem" -->
+                                <Button 
+                                    Width="120" 
+                                    Height="30" 
+                                    Margin="5" 
+                                    Grid.Row="0"
+                                    Grid.Column="1" 
+                                    HorizontalAlignment="Right" 
+                                    VerticalAlignment="Center"
+                                    Click="btnInserirImagem_Click"
+                                    >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="pack://application:,,,/monolith;component/Resources/upload_icon.png" 
+                                               Width="16" 
+                                               Height="16" 
+                                               Margin="0,0,5,0"/>
+                                        <TextBlock Text="Inserir Imagem" 
+                                                   VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
                         </GroupBox>
 
                         <!-- GroupBox Menor 1 -->
                         <GroupBox Header="TEMPLATE RESERVADO" Grid.Row="1" Grid.Column="0" Margin="5">
                             <RichTextBox Name="richTextBox2"
-                                         AcceptsReturn="True"       
-                                         VerticalScrollBarVisibility="Auto"
-                                         HorizontalScrollBarVisibility="Auto"
-                                         Width="auto"
-                                         MinHeight="100"
-                                         Margin="5"
-                                         IsEnabled="False"
-                                         />
-                            </GroupBox>
-
+                             AcceptsReturn="True"       
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             Width="auto"
+                             MinHeight="100"
+                             Margin="5"
+                             IsEnabled="False"/>
+                        </GroupBox>
 
                         <!-- GroupBox Menor 2 -->
                         <GroupBox Header="Outras Informações" Grid.Row="1" Grid.Column="1" Margin="5">
                             <RichTextBox Name="richTextBox"
-                                         AcceptsReturn="True"       
-                                         VerticalScrollBarVisibility="Auto"
-                                         HorizontalScrollBarVisibility="Auto"
-                                         Width="800"
-                                         MinHeight="100"
-                                         Margin="5" />
+                             AcceptsReturn="True"       
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Auto"
+                             Width="800"
+                             MinHeight="100"
+                             Margin="5"/>
                         </GroupBox>
-
-
                     </Grid>
                 </ScrollViewer>
             </TabItem>
+
+
 
         </TabControl>
 
@@ -234,8 +260,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <!--<Button Content="Excluir" Width="70" Height="20" Margin="5"  Background="IndianRed" FontStyle="Italic"/>-->
                     <Button Content="Novo" Width="70" Height="20" Margin="5" />
-                    <Button Width="70" Height="20" Margin="5" 
-                    >
+                    <Button Width="70" Height="20" Margin="5">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="pack://application:,,,/monolith;component/Resources/save_icon.png" Width="16" Height="16" Margin="0,0,5,0"/>
                             <TextBlock Text="Salvar" VerticalAlignment="Center"/>

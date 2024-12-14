@@ -1,0 +1,13 @@
+﻿<Window x:Class="monolith.ativos.popInputboxTituloFoto"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="InputBox" Height="150" Width="300">
+    <Grid>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">Digite o título da foto:</TextBlock>
+        <TextBox x:Name="txtInput" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
+            <Button Content="OK" Width="75" Margin="5" Click="OkButton_Click"/>
+            <Button Content="Cancel" Width="75" Margin="5" Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

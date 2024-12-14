@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.IO;
+
 
 namespace monolith.ativos
 {
@@ -166,6 +168,24 @@ namespace monolith.ativos
             return fotos;
         }
 
+        public string ObterCaminhoUpload()
+        {
+            string commandText = "SELECT "       +
+                                 "imagem_ativo " +
+                                 "FROM tb_cfg_caminho_arquivos_gerais";
+
+            var dbHelper = new DatabaseHelper();
+            using (var reader = dbHelper.ExecuteReader(commandText))
+            {
+                if (reader.Read())
+                {
+                    return reader.GetString(0);
+                }
+            }
+
+            throw new Exception("Caminho de upload não configurado.");
+        }
+
         public Dictionary<string, object> LoadDadosAtivo(int? iCodigoAtivoAtual
                                                         )
         {
@@ -203,6 +223,52 @@ namespace monolith.ativos
 
             return dados;
         }
+
+        public void UploadImagem(int? iCodigoAtivo,
+                         string sArquivo,
+                         string sCaminhoUpload,
+                         string sNomeFoto)
+        {
+            try
+            {
+                // Gerar um GUID único para o arquivo
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(sArquivo); // Exemplo: "b3d1d2b0-5358-44e8-ae6f-b2db56b967f3.png"
+
+                string sCaminhoDestino = Path.Combine(sCaminhoUpload, uniqueFileName);
+
+                if (!Directory.Exists(sCaminhoUpload))
+                {
+                    Directory.CreateDirectory(sCaminhoUpload);
+                }
+
+                File.Copy(sArquivo, sCaminhoDestino, overwrite: true);
+
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa           },
+                    { "@p_codigo_ativo"     , iCodigoAtivo ?? (object)DBNull.Value  },
+                    { "@p_caminho_completo" , sNomeFoto                             }, 
+                    { "@p_titulo"           , sCaminhoDestino                       }
+                };
+
+                var commandText = "CALL sp_insert_cadastro_basico_ativo_foto(@p_codigo_ativo, " +
+                                                                      "@p_codigo_empresa, "     +
+                                                                      "@p_titulo, "             +
+                                                                      "@p_caminho_completo "    +
+                                                                      ")";
+
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(commandText, parameters);
+
+                MessageBox.Show("Imagem carregada com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao fazer upload da imagem: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
 
 
 

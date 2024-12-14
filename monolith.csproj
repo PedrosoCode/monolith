@@ -12,6 +12,7 @@
   <ItemGroup>
     <None Remove="Resources\Monolith_icon.ico" />
     <None Remove="Resources\save_icon.png" />
+    <None Remove="Resources\upload_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\Monolith_icon.ico" />
+    <Resource Include="Resources\upload_icon.png" />
   </ItemGroup>
 
 </Project>
