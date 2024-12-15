@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using monolith.controls;
 using Microsoft.Win32;
+using System.Windows.Documents;
 
 namespace monolith.ativos
 {
@@ -99,12 +100,12 @@ namespace monolith.ativos
 
                 if (dados.Count > 0)
                 {
-                    LoadHelper.PreencherControle(txtNserieDados     , "numero_serie"    , dados);
-                    LoadHelper.PreencherControle(txtModeloDados     , "modelo"          , dados);
-                    LoadHelper.PreencherControle(txtAliasDados      , "alias"           , dados);
-                    LoadHelper.PreencherControle(txtNserieDados     , "numero_serie"    , dados);
-                    LoadHelper.PreencherControle(txtObservacaoDados , "observacao"      , dados);
-                    LoadHelper.PreencherControle(richTextBox        , "descricao"       , dados);
+                    LoadHelper.PreencherControle(txtNserieDados         , "numero_serie"    , dados);
+                    LoadHelper.PreencherControle(txtModeloDados         , "modelo"          , dados);
+                    LoadHelper.PreencherControle(txtAliasDados          , "alias"           , dados);
+                    LoadHelper.PreencherControle(txtNserieDados         , "numero_serie"    , dados);
+                    LoadHelper.PreencherControle(txtObservacaoDados     , "observacao"      , dados);
+                    LoadHelper.PreencherControle(ltxtInformacaoDados    , "descricao"       , dados);
 
                     var parceirosNegocio = FuncsCadAtivo.CarregarComboParceiroListagem();
                     cboParceiroNegocioDados.ItemsSource = parceirosNegocio;
@@ -135,6 +136,8 @@ namespace monolith.ativos
         {
             //TabListagem.Visibility = Visibility.Collapsed;
             //TabDetalhes.Visibility = Visibility.Visible;
+            TabImagem.Visibility = Visibility.Visible;
+
             MainTabControl.SelectedItem = TabDetalhes;
 
             var fotos = FuncsCadAtivo.ObterCaminhosImagens(idAtivo);
@@ -183,13 +186,32 @@ namespace monolith.ativos
 
         #endregion
 
-        private void BtnVoltar_Click(object sender, RoutedEventArgs e)
+        //private void BtnVoltar_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Retorna à aba de listagem
+        //    TabDetalhes.Visibility = Visibility.Collapsed;
+        //    TabListagem.Visibility = Visibility.Visible;
+        //    TabImagem.Visibility = Visibility.Visible;  
+        //    MainTabControl.SelectedItem = TabListagem;
+        //}
+
+        private void BtnNovo_Click(object sender, RoutedEventArgs e)
         {
-            // Retorna à aba de listagem
-            TabDetalhes.Visibility = Visibility.Collapsed;
-            TabListagem.Visibility = Visibility.Visible;
-            TabImagem.Visibility = Visibility.Visible;  
-            MainTabControl.SelectedItem = TabListagem;
+            
+            TabImagem.Visibility = Visibility.Visible;
+            MainTabControl.SelectedItem = TabDetalhes;
+
+            iCodigoAtivoAtual = null;
+            txtNserieDados.Text = "";
+            txtModeloDados.Text = "";
+            txtAliasDados.Text = "";
+            txtObservacaoDados.Text = "";
+            cboParceiroNegocioDados.SelectedValue = null;
+            cbofabricanteDados.SelectedValue = null;
+            ltxtInformacaoDados.Document = new FlowDocument();
+
+
+
         }
 
         private void btnInserirImagem_Click(object sender, RoutedEventArgs e)
@@ -222,6 +244,8 @@ namespace monolith.ativos
                                            sNomeFoto
                                            );
 
+                MostrarDetalhesAtivo(iCodigoAtivoAtual);
+
             }
             else
             {
@@ -252,7 +276,39 @@ namespace monolith.ativos
             return null;
         }
 
+        private void Btnsalvar_Click(object sender, RoutedEventArgs e)
+        {
 
+            string sNumeroSerie = txtNserieDados.Text.Trim();
+            string sModelo = txtModeloDados.Text.Trim();
+            string sAlias = txtAliasDados.Text.Trim();
+            string sObservacao = txtObservacaoDados.Text.Trim();
+            int? iCodigoParceiroNegocio = cboParceiroNegocioDados.SelectedValue != null ? Convert.ToInt32(cboParceiroNegocioDados.SelectedValue) : (int?)null;
+            int? iCodigoFabricante = cbofabricanteDados.SelectedValue != null ? Convert.ToInt32(cbofabricanteDados.SelectedValue) : (int?)null;
+            string sTexto = new TextRange(ltxtInformacaoDados.Document.ContentStart, ltxtInformacaoDados.Document.ContentEnd).Text.Trim();
+
+
+            if (iCodigoAtivoAtual == null)
+            {
+
+                FuncsCadAtivo.inserirAtivo(iCodigoAtivoAtual,
+                                           sNumeroSerie, 
+                                           sModelo,  
+                                           sAlias,  
+                                           sObservacao,
+                                           iCodigoParceiroNegocio,
+                                           iCodigoFabricante,
+                                           sTexto
+                                           );
+
+                filtrar();
+
+            }
+            else
+            {
+
+            }
+        }
 
     }
 }

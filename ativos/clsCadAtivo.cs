@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace monolith.ativos
@@ -108,12 +109,12 @@ namespace monolith.ativos
                                                                                                        "@p_observacao"           +
                                                                                                        ")", conn))
                     {
-                        cmd.Parameters.AddWithValue("p_codigo_empresa", Globals.GlobalCodigoEmpresa);
-                        cmd.Parameters.AddWithValue("p_codigo_cliente", (object)codigoCliente ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("p_numero_serie", (object)numeroSerie ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("p_codigo_fabricante", (object)codigoFabricante ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("p_modelo", (object)modelo ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("p_observacao", (object)observacao ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("p_codigo_empresa"      , Globals.GlobalCodigoEmpresa              );
+                        cmd.Parameters.AddWithValue("p_codigo_cliente"      , (object)codigoCliente     ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("p_numero_serie"        , (object)numeroSerie       ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("p_codigo_fabricante"   , (object)codigoFabricante  ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("p_modelo"              , (object)modelo            ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("p_observacao"          , (object)observacao        ?? DBNull.Value);
 
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -252,10 +253,10 @@ namespace monolith.ativos
                 };
 
                 var commandText = "CALL sp_insert_cadastro_basico_ativo_foto(@p_codigo_ativo, " +
-                                                                      "@p_codigo_empresa, "     +
-                                                                      "@p_titulo, "             +
-                                                                      "@p_caminho_completo "    +
-                                                                      ")";
+                                                                            "@p_codigo_empresa, "     +
+                                                                            "@p_titulo, "             +
+                                                                            "@p_caminho_completo "    +
+                                                                            ")";
 
                 var dbHelper = new DatabaseHelper();
                 dbHelper.ExecuteCommand(commandText, parameters);
@@ -268,7 +269,51 @@ namespace monolith.ativos
             }
         }
 
+        public void inserirAtivo(int? iCodigoAtivoAtual,
+                                 string sNumeroSerie,
+                                 string sModelo,
+                                 string sAlias,
+                                 string sObservacao,
+                                 int? iCodigoParceiroNegocio,
+                                 int? iCodigoFabricante,
+                                 string sTexto
+                                 )
+        {
+            try
+            {
 
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_cliente"       , iCodigoParceiroNegocio       },
+                    { "@p_numero_serie"         , sNumeroSerie                 },
+                    { "@p_codigo_fabricante"    , iCodigoFabricante            },
+                    { "@p_modelo"               , sModelo                      },
+                    { "@p_observacao"           , sObservacao                  },
+                    { "@p_codigo_empresa"       , Globals.GlobalCodigoEmpresa  },
+                    { "@p_descricao"            , sTexto                       },
+                    { "@p_alias"                , sAlias                       },
+                };
+
+                var commandText = "CALL sp_insert_cadastro_basico_ativo(@p_codigo_cliente, "     +
+                                                                       "@p_numero_serie, "       +
+                                                                       "@p_codigo_fabricante, "  +
+                                                                       "@p_modelo, "             +
+                                                                       "@p_observacao, "         +
+                                                                       "@p_codigo_empresa, "     +
+                                                                       "@p_descricao, "          +
+                                                                       "@p_alias "               +
+                                                                       ")";
+
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(commandText, parameters);
+
+                MessageBox.Show("Ativo cadastrado!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao inserir os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
 
 
