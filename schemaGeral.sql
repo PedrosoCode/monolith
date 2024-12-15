@@ -808,10 +808,10 @@ $$;
 ALTER PROCEDURE public.sp_delete_cadastro_parceiro_negocio(IN p_codigo_empresa integer, IN p_codigo_parceiro integer) OWNER TO postgres;
 
 --
--- Name: sp_insert_cadastro_basico_ativo(integer, character varying, integer, character varying, smallint, integer, character varying, boolean, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: sp_insert_cadastro_basico_ativo(integer, character varying, integer, character varying, character varying, integer, text, text); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_insert_cadastro_basico_ativo(IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_codigo_prioridade smallint, IN p_codigo_tecnico_responsavel integer, IN p_observacao character varying, IN p_nivel_manutencao boolean, IN p_codigo_empresa integer)
+CREATE PROCEDURE public.sp_insert_cadastro_basico_ativo(IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_observacao character varying, IN p_codigo_empresa integer, IN p_descricao text, IN p_alias text)
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -825,30 +825,30 @@ BEGIN
         numero_serie,
         codigo_fabricante,
         modelo,
-        codigo_prioridade,
-        codigo_tecnico_responsavel,
         observacao,
         data_input,
-        nivel_manutencao,
-        codigo_empresa
+        codigo_empresa,
+		descricao,
+		alias,
+		data_ultima_alteracao
     ) VALUES (
         v_codigo,
         p_codigo_cliente,
         p_numero_serie,
         p_codigo_fabricante,
         p_modelo,
-        p_codigo_prioridade,
-        p_codigo_tecnico_responsavel,
         p_observacao,
         CURRENT_DATE,
-        p_nivel_manutencao,
-        p_codigo_empresa
+        p_codigo_empresa,
+		p_descricao,
+		p_alias,
+		CURRENT_DATE
     );
 END;
 $$;
 
 
-ALTER PROCEDURE public.sp_insert_cadastro_basico_ativo(IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_codigo_prioridade smallint, IN p_codigo_tecnico_responsavel integer, IN p_observacao character varying, IN p_nivel_manutencao boolean, IN p_codigo_empresa integer) OWNER TO postgres;
+ALTER PROCEDURE public.sp_insert_cadastro_basico_ativo(IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_observacao character varying, IN p_codigo_empresa integer, IN p_descricao text, IN p_alias text) OWNER TO postgres;
 
 --
 -- Name: sp_insert_cadastro_basico_ativo_foto(integer, integer, character varying, character varying, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -1448,31 +1448,30 @@ $$;
 ALTER PROCEDURE public.sp_update_cadastro_basico_ambiente(IN ambiente_id integer, IN novo_nome_ambiente character varying) OWNER TO postgres;
 
 --
--- Name: sp_update_cadastro_basico_ativo(integer, integer, character varying, integer, character varying, smallint, integer, character varying, boolean, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+-- Name: sp_update_cadastro_basico_ativo(integer, integer, character varying, integer, character varying, character varying, integer, text, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_update_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_codigo_prioridade smallint, IN p_codigo_tecnico_responsavel integer, IN p_observacao character varying, IN p_nivel_manutencao boolean, IN p_codigo_empresa integer)
+CREATE PROCEDURE public.sp_update_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_observacao character varying, IN p_codigo_empresa integer, IN p_descricao text, IN p_alias character varying)
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    UPDATE tb_cad_ativo_main
+    UPDATE tb_cad_ativo
     SET
         codigo_cliente = p_codigo_cliente,
-        numero_serie = p_numero_serie,
-        codigo_fabricante = p_codigo_fabricante,
-        modelo = p_modelo,
-        codigo_prioridade = p_codigo_prioridade,
-        codigo_tecnico_responsavel = p_codigo_tecnico_responsavel,
-        observacao = p_observacao,
-        nivel_manutencao = p_nivel_manutencao,
-        codigo_empresa = p_codigo_empresa,
-        data_input = NOW() -- Atualizando com a data e hora atual
-    WHERE codigo = p_codigo;
+		numero_serie = p_numero_serie,
+		codigo_fabricante = p_codigo_fabricante,
+		modelo = p_modelo,
+		observacao = p_observacao,
+		descricao = p_descricao,
+		alias = p_alias,
+		data_ultima_alteracao = CURRENT_DATE
+    WHERE codigo = p_codigo
+	AND   codigo_empresa = p_codigo_empresa;
 END;
 $$;
 
 
-ALTER PROCEDURE public.sp_update_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_codigo_prioridade smallint, IN p_codigo_tecnico_responsavel integer, IN p_observacao character varying, IN p_nivel_manutencao boolean, IN p_codigo_empresa integer) OWNER TO postgres;
+ALTER PROCEDURE public.sp_update_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_cliente integer, IN p_numero_serie character varying, IN p_codigo_fabricante integer, IN p_modelo character varying, IN p_observacao character varying, IN p_codigo_empresa integer, IN p_descricao text, IN p_alias character varying) OWNER TO postgres;
 
 --
 -- Name: sp_update_cadastro_basico_ativo_v2(integer, integer, character varying, integer, character varying, smallint, integer, character varying, boolean, integer); Type: PROCEDURE; Schema: public; Owner: postgres

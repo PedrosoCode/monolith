@@ -307,6 +307,18 @@ namespace monolith.ativos
             else
             {
 
+                FuncsCadAtivo.atualizarAtivo(iCodigoAtivoAtual,
+                                             sNumeroSerie,
+                                             sModelo,
+                                             sAlias,
+                                             sObservacao,
+                                             iCodigoParceiroNegocio,
+                                             iCodigoFabricante,
+                                             sTexto
+                                             );
+
+                filtrar();
+
             }
         }
 

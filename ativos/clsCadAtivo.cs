@@ -316,6 +316,53 @@ namespace monolith.ativos
         }
 
 
+        public void atualizarAtivo(int? iCodigoAtivoAtual,
+                                   string sNumeroSerie,
+                                   string sModelo,
+                                   string sAlias,
+                                   string sObservacao,
+                                   int? iCodigoParceiroNegocio,
+                                   int? iCodigoFabricante,
+                                   string sTexto
+                                   )
+        {
+            try
+            {
+
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo"               , iCodigoAtivoAtual            },
+                    { "@p_codigo_cliente"       , iCodigoParceiroNegocio       },
+                    { "@p_numero_serie"         , sNumeroSerie                 },
+                    { "@p_codigo_fabricante"    , iCodigoFabricante            },
+                    { "@p_modelo"               , sModelo                      },
+                    { "@p_observacao"           , sObservacao                  },
+                    { "@p_codigo_empresa"       , Globals.GlobalCodigoEmpresa  },
+                    { "@p_descricao"            , sTexto                       },
+                    { "@p_alias"                , sAlias                       },
+                };
+
+                var commandText = "CALL sp_update_cadastro_basico_ativo(@p_codigo, "            +
+                                                                       "@p_codigo_cliente, "    +
+                                                                       "@p_numero_serie, "      +
+                                                                       "@p_codigo_fabricante, " +
+                                                                       "@p_modelo, "            +
+                                                                       "@p_observacao, "        +
+                                                                       "@p_codigo_empresa, "    +
+                                                                       "@p_descricao, "         +
+                                                                       "@p_alias "              +
+                                                                       ")";
+
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(commandText, parameters);
+
+                MessageBox.Show("Ativo atualizado!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao inserir os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
 
 
