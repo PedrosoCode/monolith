@@ -14,12 +14,16 @@
             <TabItem Header="Fotos" Name="TabImagem">
                 <Grid x:Name="GridFotos">
                     <GroupBox Header="Fotos" Margin="5">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                        <!-- Habilitar scroll horizontal e vertical -->
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                             <ItemsControl Name="FotosCarrossel">
-                                <!-- Painel de itens horizontal para exibir as imagens -->
+                                <!-- Painel de itens ajustado para WrapPanel -->
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
+                                        <WrapPanel Orientation="Horizontal" 
+                                       ItemWidth="200" 
+                                       ItemHeight="250" />
+                                        <!-- Define tamanho fixo de cada item -->
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
 
@@ -29,19 +33,17 @@
                                             <!-- Moldura da foto -->
                                             <Border BorderBrush="Black" BorderThickness="2" Padding="5" CornerRadius="5">
                                                 <Image Source="{Binding CaminhoCompleto}" 
-                                                       HorizontalAlignment="Stretch"
-                                                       VerticalAlignment="Center" 
-                                                       Stretch="UniformToFill" 
-                                                       Height="300" 
-                                                       MouseLeftButtonDown="OnImageClick"
-                                                       ImageFailed="OnImageFailed" />
+                                           Stretch="UniformToFill" 
+                                           Width="180" Height="180" 
+                                           MouseLeftButtonDown="OnImageClick"
+                                           ImageFailed="OnImageFailed" />
                                             </Border>
 
                                             <!-- Nome descritivo -->
                                             <TextBlock Text="{Binding NomeImagem}" 
-                                                       TextAlignment="Center" 
-                                                       FontSize="14" 
-                                                       Margin="0,5,0,0" />
+                                           TextAlignment="Center" 
+                                           FontSize="14" 
+                                           Margin="0,5,0,0" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -50,7 +52,9 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            
+
+
+
 
             <!-- Aba de Listagem -->
             <TabItem Header="Listagem" x:Name="TabListagem" Margin="-2,-2,-2,0" Height="20" VerticalAlignment="Top" Visibility="Visible">

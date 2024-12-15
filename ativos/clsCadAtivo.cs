@@ -247,8 +247,8 @@ namespace monolith.ativos
                 {
                     { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa           },
                     { "@p_codigo_ativo"     , iCodigoAtivo ?? (object)DBNull.Value  },
-                    { "@p_caminho_completo" , sNomeFoto                             }, 
-                    { "@p_titulo"           , sCaminhoDestino                       }
+                    { "@p_caminho_completo" , sCaminhoDestino                       }, 
+                    { "@p_titulo"           , sNomeFoto                             }
                 };
 
                 var commandText = "CALL sp_insert_cadastro_basico_ativo_foto(@p_codigo_ativo, " +
