@@ -111,6 +111,26 @@ $$;
 ALTER FUNCTION public.fn_cadastro_ativo_select_dados(p_codigo_empresa integer, p_codigo_ativo integer) OWNER TO postgres;
 
 --
+-- Name: fn_cadastro_ativo_select_foto(integer, integer); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.fn_cadastro_ativo_select_foto(p_codigo_empresa integer, p_codigo_ativo integer) RETURNS TABLE(caminho_completo character varying, titulo character varying, codigo integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY SELECT 
+		tb_cad_ativo_foto.caminho_completo, 
+		tb_cad_ativo_foto.titulo,
+		tb_cad_ativo_foto.codigo
+	FROM tb_cad_ativo_foto;
+		
+END;
+$$;
+
+
+ALTER FUNCTION public.fn_cadastro_ativo_select_foto(p_codigo_empresa integer, p_codigo_ativo integer) OWNER TO postgres;
+
+--
 -- Name: fn_cadastro_listar_tecnico(integer); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -661,6 +681,24 @@ $$;
 ALTER PROCEDURE public.sp_atualizar_parceiro_negocio(IN p_codigo integer, IN p_codigo_empresa integer, IN p_documento character varying, IN p_nome_fantasia character varying, IN p_razao_social character varying, IN p_email character varying, IN p_contato character varying, IN p_telefone character varying, IN p_tipo character, IN p_codigo_pais bigint, IN p_codigo_estado integer, IN p_codigo_cidade bigint, IN p_tipo_documento boolean, IN p_cep character varying, IN p_logradouro character varying, IN p_numero character varying, IN p_complemento character varying, IN p_bairro character varying) OWNER TO postgres;
 
 --
+-- Name: sp_cadastro_ativo_delete_foto(integer, integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
+--
+
+CREATE PROCEDURE public.sp_cadastro_ativo_delete_foto(IN p_codigo_empresa integer, IN p_codigo_ativo integer, IN p_codigo integer)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    DELETE FROM tb_cad_ativo_foto
+    WHERE 	codigo = p_codigo 
+	AND 	codigo_ativo = p_codigo_ativo
+    AND 	codigo_empresa = p_codigo_empresa;
+END;
+$$;
+
+
+ALTER PROCEDURE public.sp_cadastro_ativo_delete_foto(IN p_codigo_empresa integer, IN p_codigo_ativo integer, IN p_codigo integer) OWNER TO postgres;
+
+--
 -- Name: sp_cadastro_basico_ambiente(character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -769,24 +807,20 @@ ALTER PROCEDURE public.sp_deletar_parceiro_negocio(IN p_codigo integer, IN p_cod
 -- Name: sp_delete_cadastro_basico_ativo(integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
-CREATE PROCEDURE public.sp_delete_cadastro_basico_ativo(IN p_codigo_foto integer, IN p_codigo_empresa integer)
+CREATE PROCEDURE public.sp_delete_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_empresa integer)
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    -- Deleta a foto da tabela
-    DELETE FROM tb_cad_ativo_foto
-    WHERE codigo = p_codigo_foto
+
+    DELETE FROM tb_cad_ativo
+    WHERE codigo = p_codigo
     AND codigo_empresa = p_codigo_empresa;
-    
-    -- Verificação adicional opcional para garantir a exclusão
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Foto não encontrada ou já deletada';
-    END IF;
+   
 END;
 $$;
 
 
-ALTER PROCEDURE public.sp_delete_cadastro_basico_ativo(IN p_codigo_foto integer, IN p_codigo_empresa integer) OWNER TO postgres;
+ALTER PROCEDURE public.sp_delete_cadastro_basico_ativo(IN p_codigo integer, IN p_codigo_empresa integer) OWNER TO postgres;
 
 --
 -- Name: sp_delete_cadastro_parceiro_negocio(integer, integer); Type: PROCEDURE; Schema: public; Owner: postgres
@@ -2291,7 +2325,7 @@ ALTER TABLE ONLY public.tb_stc_status_nm
 --
 
 ALTER TABLE ONLY public.tb_cad_ativo_foto
-    ADD CONSTRAINT pk_tb_cad_ativo_foto PRIMARY KEY (codigo, codigo_empresa);
+    ADD CONSTRAINT pk_tb_cad_ativo_foto PRIMARY KEY (codigo, codigo_empresa, codigo_ativo);
 
 
 --
