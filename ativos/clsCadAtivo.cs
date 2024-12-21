@@ -1,4 +1,4 @@
-﻿using Monolith.Ativos;
+﻿
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
+using System.Windows.Media.Imaging;
 
 
 namespace monolith.ativos
@@ -131,32 +132,29 @@ namespace monolith.ativos
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-        public List<FotoAtivo> ObterCaminhosImagens(int? iCodigoAtivo)
+        public async Task<List<string>> ObterCaminhosImagensAsync(int? iCodigoAtivo)
         {
-            var fotos = new List<FotoAtivo>();
+            var caminhos = new List<string>();
 
             try
             {
                 var parameters = new Dictionary<string, object>
                 {
-                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa           },
-                    { "@p_codigo"           , iCodigoAtivo ?? (object)DBNull.Value  }
+                    { "@p_codigo_empresa", Globals.GlobalCodigoEmpresa },
+                    { "@p_codigo_ativo", iCodigoAtivo ?? (object)DBNull.Value }
                 };
 
-                string commandText = "SELECT caminho_completo, titulo " +
-                                     "FROM tb_cad_ativo_foto "          +
-                                     "WHERE codigo_empresa = @p_codigo_empresa";
+                string commandText = "SELECT caminho_completo FROM fn_cadastro_ativo_select_foto(@p_codigo_empresa, @p_codigo_ativo)";
 
                 var dbHelper = new DatabaseHelper();
-                using (var reader = dbHelper.ExecuteReader(commandText, parameters))
+                using (var reader = await dbHelper.ExecuteReaderAsync(commandText, parameters))
                 {
                     while (reader.Read())
                     {
-                        if (!reader.IsDBNull(0))
+                        var caminho = reader["caminho_completo"] as string;
+                        if (!string.IsNullOrEmpty(caminho))
                         {
-                            var caminhoCompleto = reader.GetString(0);
-                            var nomeImagem = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
-                            fotos.Add(new FotoAtivo(caminhoCompleto, nomeImagem));
+                            caminhos.Add(caminho);
                         }
                     }
                 }
@@ -166,8 +164,11 @@ namespace monolith.ativos
                 MessageBox.Show($"Erro ao obter caminhos das imagens: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            return fotos;
+            return caminhos;
         }
+
+
+
 
         public string ObterCaminhoUpload()
         {
@@ -364,8 +365,58 @@ namespace monolith.ativos
             }
         }
 
+        public async Task ExcluirImagemAsync(int? iCodigoAtivo, int? codigoImagem, string caminhoCompleto)
+        {
+            try
+            {
+                // Passo 1: Executar a procedure de exclusão no banco de dados
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_ativo", iCodigoAtivo },
+                    { "@p_codigo_imagem", codigoImagem },
+                    { "@p_codigo_empresa", Globals.GlobalCodigoEmpresa }
+                };
 
+                string commandText = "CALL sp_cadastro_ativo_delete_foto (@p_codigo_ativo, @p_codigo_imagem, @p_codigo_empresa)";
+                var dbHelper = new DatabaseHelper();
+                await dbHelper.ExecuteCommandAsync(commandText, parameters);
 
+                // Passo 2: Excluir o arquivo da imagem do sistema de arquivos
+                if (File.Exists(caminhoCompleto))
+                {
+                    File.Delete(caminhoCompleto);  // Excluir o arquivo
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao excluir a imagem: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public void ExcluirAtivo(int? iCodigoAtivo)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "@p_codigo_empresa"   , Globals.GlobalCodigoEmpresa   },
+                    { "@p_codigo"           , iCodigoAtivo                  }
+                };
+
+                var commandText = "CALL sp_delete_cadastro_basico_ativo(@p_codigo, "        +
+                                                                       "@p_codigo_empresa"  +
+                                                                       ")";
+
+                var dbHelper = new DatabaseHelper();
+                dbHelper.ExecuteCommand(commandText, parameters);
+
+                MessageBox.Show("Ativo deletado com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao deletar os dados: {ex.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
 
 
